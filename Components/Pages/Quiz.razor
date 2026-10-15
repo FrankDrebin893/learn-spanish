@@ -4,6 +4,7 @@
 @inject WordService WordService
 @inject ProgressService ProgressService
 @inject IJSRuntime JS
+@inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
 <PageTitle>Práctica y Cuestionarios | Aprende Español</PageTitle>
@@ -106,11 +107,18 @@ else if (_quizComplete)
                        Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none;">
                 Repetir Prueba
             </MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Size="Size.Large"
-                       OnClick="ExitQuiz" StartIcon="@Icons.Material.Rounded.Home"
-                       Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none; border-color: #EBE6DE;">
-                Volver al Inicio
-            </MudButton>
+            <div class="d-flex gap-3 w-100">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Size="Size.Large"
+                           OnClick="ExitQuiz" StartIcon="@Icons.Material.Rounded.Tune"
+                           Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none; border-color: #EBE6DE;">
+                    Configurar
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Size="Size.Large"
+                           OnClick="GoHome" StartIcon="@Icons.Material.Rounded.Home"
+                           Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none; border-color: #EBE6DE;">
+                    Volver al Inicio
+                </MudButton>
+            </div>
         </div>
     </MudPaper>
 }
@@ -385,6 +393,11 @@ else if (_currentQuestion != null)
     {
         _quizStarted = false;
         _quizComplete = false;
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("");
     }
 
     private async Task PlaySpanishAudio(string text)

@@ -1,6 +1,7 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject SpanishWordLearner.Services.ProgressService ProgressService
+@implements IDisposable
 
 <MudThemeProvider Theme="_theme" />
 <MudPopoverProvider />
@@ -12,7 +13,7 @@
     <MudAppBar Elevation="0" Style="background: #FFFFFF; border-bottom: 1px solid #EBE6DE; height: 68px;" Fixed="true">
         <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex align-center justify-space-between px-2 px-md-4">
             <!-- Brand -->
-            <a href="" class="d-flex align-center text-decoration-none" style="gap: 12px; color: inherit;">
+            <a href="./" class="d-flex align-center text-decoration-none" style="gap: 12px; color: inherit;">
                 <div style="width: 38px; height: 38px; background: linear-gradient(135deg, #D9483B 0%, #E0872E 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(217, 72, 59, 0.25);">
                     <span style="color: #FFFFFF; font-weight: 800; font-size: 20px; line-height: 1; font-family: 'Outfit', sans-serif;">ñ</span>
                 </div>
@@ -24,7 +25,7 @@
 
             <!-- Desktop Nav Links -->
             <div class="d-none d-md-flex align-center" style="gap: 8px;">
-                <MudButton Variant="@GetNavVariant("/")" Color="@GetNavColor("/")" Href="" StartIcon="@Icons.Material.Rounded.Home"
+                <MudButton Variant="@GetNavVariant("/")" Color="@GetNavColor("/")" Href="./" OnClick="@(() => NavigationManager.NavigateTo(""))" StartIcon="@Icons.Material.Rounded.Home"
                            Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
                     Inicio
                 </MudButton>
@@ -62,7 +63,7 @@
     <!-- Mobile Bottom Navigation Bar -->
     <div class="d-flex d-md-none fixed-bottom" style="position: fixed; bottom: 0; left: 0; right: 0; background: #FFFFFF; border-top: 1px solid #EBE6DE; height: 64px; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.03);">
         <div class="d-flex justify-space-around align-center w-100 px-2">
-            <a href="" class="d-flex flex-column align-center text-decoration-none py-1" style="color: @(IsActive("/") ? "#D9483B" : "#78716C");">
+            <a href="./" class="d-flex flex-column align-center text-decoration-none py-1" style="color: @(IsActive("/") ? "#D9483B" : "#78716C");">
                 <MudIcon Icon="@Icons.Material.Rounded.Home" Size="Size.Medium" />
                 <span style="font-size: 0.72rem; font-weight: 600;">Inicio</span>
             </a>
@@ -87,20 +88,31 @@
 
     protected override async Task OnInitializedAsync()
     {
+        NavigationManager.LocationChanged += OnLocationChanged;
         var progress = await ProgressService.GetProgressAsync();
         _learnedCount = progress.TotalWordsLearned;
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     private bool IsActive(string href)
     {
         var uri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         if (string.IsNullOrEmpty(uri) || uri == "/")
-            return href == "/";
+            return href == "/" || href == "./" || href == "";
         return href.TrimStart('/') == uri.Split('?')[0];
     }
 
     private Variant GetNavVariant(string href) => IsActive(href) ? Variant.Filled : Variant.Text;
     private Color GetNavColor(string href) => IsActive(href) ? Color.Primary : Color.Default;
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
 
     private readonly MudTheme _theme = new()
     {
