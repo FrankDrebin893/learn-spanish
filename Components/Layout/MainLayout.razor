@@ -24,30 +24,30 @@
             </a>
 
             <!-- Desktop Nav Links -->
-            <div class="d-none d-md-flex align-center" style="gap: 8px;">
-                <MudButton Variant="@GetNavVariant("/")" Color="@GetNavColor("/")" Href="./" OnClick="@(() => NavigationManager.NavigateTo(""))" StartIcon="@Icons.Material.Rounded.Home"
-                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+            <div class="d-none d-md-flex align-center" style="gap: 6px;">
+                <MudButton Variant="Variant.Text" Href="./" OnClick="@(() => NavigationManager.NavigateTo(""))" StartIcon="@Icons.Material.Rounded.Home"
+                           Class="px-3 py-2" Style="@GetNavStyle("/")">
                     Inicio
                 </MudButton>
-                <MudButton Variant="@GetNavVariant("/learn")" Color="@GetNavColor("/learn")" Href="learn" StartIcon="@Icons.Material.Rounded.School"
-                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                <MudButton Variant="Variant.Text" Href="learn" StartIcon="@Icons.Material.Rounded.School"
+                           Class="px-3 py-2" Style="@GetNavStyle("/learn")">
                     Aprender
                 </MudButton>
-                <MudButton Variant="@GetNavVariant("/quiz")" Color="@GetNavColor("/quiz")" Href="quiz" StartIcon="@Icons.Material.Rounded.Quiz"
-                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                <MudButton Variant="Variant.Text" Href="quiz" StartIcon="@Icons.Material.Rounded.Quiz"
+                           Class="px-3 py-2" Style="@GetNavStyle("/quiz")">
                     Práctica
                 </MudButton>
-                <MudButton Variant="@GetNavVariant("/statistics")" Color="@GetNavColor("/statistics")" Href="statistics" StartIcon="@Icons.Material.Rounded.Analytics"
-                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                <MudButton Variant="Variant.Text" Href="statistics" StartIcon="@Icons.Material.Rounded.Analytics"
+                           Class="px-3 py-2" Style="@GetNavStyle("/statistics")">
                     Progreso
                 </MudButton>
             </div>
 
             <!-- Header Quick Badge -->
             <div class="d-flex align-center" style="gap: 12px;">
-                <div class="d-flex align-center px-3 py-1" style="background: #FEF3E7; border: 1px solid #FCD34D; border-radius: 20px; gap: 6px;">
+                <div class="d-flex align-center px-3 py-1.5" style="background: #FAF8F5; border: 1px solid #EBE6DE; border-radius: 20px; gap: 6px;">
                     <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706;" />
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #B45309;">@_learnedCount Palabras</span>
+                    <span class="tabular-numbers" style="font-size: 0.85rem; font-weight: 700; color: #1C1917;">@_learnedCount Palabras</span>
                 </div>
             </div>
         </MudContainer>
@@ -106,8 +106,14 @@
         return href.TrimStart('/') == uri.Split('?')[0];
     }
 
-    private Variant GetNavVariant(string href) => IsActive(href) ? Variant.Filled : Variant.Text;
-    private Color GetNavColor(string href) => IsActive(href) ? Color.Primary : Color.Default;
+    private string GetNavStyle(string href)
+    {
+        if (IsActive(href))
+        {
+            return "border-radius: 10px; text-transform: none; font-weight: 700; font-size: 0.95rem; background: #FDEEEB; color: #D9483B;";
+        }
+        return "border-radius: 10px; text-transform: none; font-weight: 500; font-size: 0.95rem; color: #57534E;";
+    }
 
     public void Dispose()
     {

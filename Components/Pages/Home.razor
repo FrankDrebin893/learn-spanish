@@ -7,16 +7,13 @@
 
 <PageTitle>Aprende Español | Inicio</PageTitle>
 
-<!-- Hero Section -->
-<div class="text-center mb-8">
-    <div class="d-inline-flex align-center px-3 py-1 mb-3" style="background: #FDEEEB; border: 1px solid #FBCBC4; border-radius: 20px; gap: 8px;">
-        <span style="font-size: 0.82rem; font-weight: 700; color: #D9483B;">✨ MÉTODO DE FRECUENCIA EMPÍRICA</span>
-    </div>
+<!-- Hero Header -->
+<div class="text-center mb-6 pt-2">
     <MudText Typo="Typo.h3" Class="mb-2" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em;">
-        ¡Hola! Aprende Español
+        Aprende Español por Frecuencia
     </MudText>
-    <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 1.1rem; max-width: 580px; margin: 0 auto;">
-        Domina las <strong>@(WordService.TotalWordCount.ToString("N0"))</strong> palabras más frecuentes del idioma con tarjetas inteligentes, audio nativo y cuestionarios rápidos.
+    <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 1.05rem; max-width: 580px; margin: 0 auto; line-height: 1.5;">
+        Domina las <strong>@(WordService.TotalWordCount.ToString("N0"))</strong> palabras más frecuentes del idioma mediante tarjetas inteligentes, audio nativo y práctica interactiva.
     </MudText>
 </div>
 
@@ -28,149 +25,190 @@
 }
 else
 {
-    <!-- Progress Dashboard Card -->
-    <MudPaper Elevation="0" Class="tierra-card pa-6 mb-6">
-        <div class="d-flex justify-space-between align-center mb-4">
-            <div>
-                <MudText Typo="Typo.h6" Style="font-weight: 700; color: #1C1917;">Tu Progreso de Aprendizaje</MudText>
-                <MudText Typo="Typo.caption" Style="color: #78716C;">Guardado automáticamente en tu navegador</MudText>
-            </div>
-            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled" Style="font-weight: 700;">
-                Nivel @GetProficiencyLevel()
-            </MudChip>
+    <!-- Primary Focus: Hero Study Card -->
+    <div class="tierra-hero-card pa-6 pa-md-8 mb-6">
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-4 gap-2">
+            <span class="d-inline-flex align-center gap-1 px-3 py-1 rounded-pill" style="background: #FDEEEB; color: #BF3A2E; font-size: 0.8rem; font-weight: 700;">
+                <MudIcon Icon="@Icons.Material.Rounded.Star" Size="Size.Small" /> Nivel @GetProficiencyLevel()
+            </span>
+            <span class="tabular-numbers" style="font-size: 0.85rem; font-weight: 600; color: #78716C;">
+                Top 200 palabras esenciales
+            </span>
         </div>
 
-        <MudGrid Spacing="3" Class="mb-4">
+        <div class="mb-5">
+            <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.01em;" Class="mb-2">
+                Continuar tu Sesión de Estudio
+            </MudText>
+            <MudText Typo="Typo.body1" Style="color: #57534E; max-width: 540px; font-size: 0.98rem; line-height: 1.5;">
+                Estudia tarjetas interactivas organizadas por frecuencia natural de uso con pronunciación nativa y refuerzo activo.
+            </MudText>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between gap-4 pt-1">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="learn" Size="Size.Large"
+                       StartIcon="@Icons.Material.Rounded.PlayArrow"
+                       Style="border-radius: 12px; font-weight: 700; font-size: 1rem; padding: 12px 28px; text-transform: none; box-shadow: 0 4px 14px rgba(217, 72, 59, 0.28);">
+                Comenzar Estudio Ahora
+            </MudButton>
+
+            <div class="d-flex align-center gap-2" style="font-size: 0.85rem; color: #78716C;">
+                <MudIcon Icon="@Icons.Material.Rounded.Keyboard" Size="Size.Small" />
+                <span>Atajos con <span class="kbd-pill">Espacio</span> y números</span>
+            </div>
+        </div>
+
+        <!-- Global Progress Milestone Bar -->
+        <div class="mt-6 pt-4" style="border-top: 1px solid #F3EFEA;">
+            <div class="d-flex justify-space-between mb-1" style="font-size: 0.82rem; font-weight: 600;">
+                <span style="color: #78716C;">Progreso hacia la maestría</span>
+                <span class="tabular-numbers" style="color: #D9483B; font-weight: 700;">
+                    @_wordsLearned de @WordService.TotalWordCount palabras (@_progressPercent.ToString("F1")%)
+                </span>
+            </div>
+            <MudProgressLinear Color="Color.Primary" Rounded="true" Size="Size.Medium"
+                               Value="@(_progressPercent)" Style="height: 8px; background-color: #EBE6DE;" />
+        </div>
+    </div>
+
+    <!-- Metrics Row: Structured, Calm, Tabular -->
+    <MudPaper Elevation="0" Class="tierra-card pa-4 px-md-6 mb-6">
+        <MudGrid Spacing="2">
             <MudItem xs="6" sm="3">
-                <div class="pa-3 text-center rounded-lg" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
-                    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #D9483B;">@_wordsLearned</MudText>
-                    <MudText Typo="Typo.caption" Style="font-weight: 600; color: #57534E;">Dominadas</MudText>
+                <div class="pa-2 text-center">
+                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Dominadas</span>
+                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #D9483B; line-height: 1.2;">@_wordsLearned</span>
+                    <span style="font-size: 0.75rem; color: #78716C;">palabras sabidas</span>
                 </div>
             </MudItem>
             <MudItem xs="6" sm="3">
-                <div class="pa-3 text-center rounded-lg" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
-                    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #E0872E;">@_wordsSeen</MudText>
-                    <MudText Typo="Typo.caption" Style="font-weight: 600; color: #57534E;">Estudiadas</MudText>
+                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Estudiadas</span>
+                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #1C1917; line-height: 1.2;">@_wordsSeen</span>
+                    <span style="font-size: 0.75rem; color: #78716C;">vistas en total</span>
                 </div>
             </MudItem>
             <MudItem xs="6" sm="3">
-                <div class="pa-3 text-center rounded-lg" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
-                    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #16A34A;">@_quizzesTaken</MudText>
-                    <MudText Typo="Typo.caption" Style="font-weight: 600; color: #57534E;">Pruebas</MudText>
+                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Cuestionarios</span>
+                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #1C1917; line-height: 1.2;">@_quizzesTaken</span>
+                    <span style="font-size: 0.75rem; color: #78716C;">pruebas hechas</span>
                 </div>
             </MudItem>
             <MudItem xs="6" sm="3">
-                <div class="pa-3 text-center rounded-lg" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
-                    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1E293B;">@_overallAccuracy.ToString("F0")%</MudText>
-                    <MudText Typo="Typo.caption" Style="font-weight: 600; color: #57534E;">Precisión</MudText>
+                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Precisión</span>
+                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: @(_overallAccuracy >= 70 ? "#16A34A" : "#1C1917"); line-height: 1.2;">
+                        @_overallAccuracy.ToString("F0")%
+                    </span>
+                    <span style="font-size: 0.75rem; color: #78716C;">en pruebas</span>
                 </div>
             </MudItem>
         </MudGrid>
-
-        <div class="mb-2">
-            <div class="d-flex justify-space-between mb-1" style="font-size: 0.85rem; font-weight: 600;">
-                <span style="color: #57534E;">Meta de vocabulario</span>
-                <span style="color: #D9483B;">@_wordsLearned de @WordService.TotalWordCount palabras (@_progressPercent.ToString("F1")%)</span>
-            </div>
-            <MudProgressLinear Color="Color.Primary" Rounded="true" Size="Size.Large"
-                               Value="@(_progressPercent)" Style="height: 10px; background-color: #EBE6DE;" />
-        </div>
     </MudPaper>
 
-    <!-- Word of the Moment Showcase -->
-    @if (_featuredWord != null)
-    {
-        <MudPaper Elevation="0" Class="tierra-card pa-5 mb-6" Style="background: linear-gradient(135deg, #FFFFFF 0%, #FAF8F5 100%);">
-            <div class="d-flex justify-space-between align-center mb-2">
-                <span class="d-flex align-center gap-2" style="font-size: 0.8rem; font-weight: 700; color: #E0872E; text-transform: uppercase;">
-                    <MudIcon Icon="@Icons.Material.Rounded.Lightbulb" Size="Size.Small" /> Palabra del momento
-                </span>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #78716C;">Frecuencia #@_featuredWord.FrequencyRank</span>
-            </div>
-            <div class="d-flex align-center justify-space-between">
-                <div>
-                    <div class="d-flex align-baseline gap-3">
-                        <span style="font-size: 1.75rem; font-weight: 800; color: #1C1917;">@_featuredWord.Spanish</span>
-                        <span style="font-size: 0.85rem; font-weight: 600; color: #78716C; font-style: italic;">@_featuredWord.PartOfSpeech</span>
-                    </div>
-                    <span style="font-size: 1.05rem; color: #D9483B; font-weight: 600;">@_featuredWord.English</span>
-                    @if (!string.IsNullOrEmpty(_featuredWord.ExampleSentence))
-                    {
-                        <div class="mt-1" style="font-size: 0.85rem; color: #57534E;">
-                            <span>"@_featuredWord.ExampleSentence"</span>
-                            <span class="d-block" style="color: #78716C; font-size: 0.78rem;">@_featuredWord.ExampleTranslation</span>
-                        </div>
-                    }
-                </div>
-                <button class="audio-btn" @onclick="PlayFeaturedAudio" title="Escuchar pronunciación">
-                    <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Medium" />
-                </button>
-            </div>
-        </MudPaper>
-    }
-
-    <!-- Primary Learning Action Cards -->
+    <!-- Secondary Activities: Practice & Discovery -->
     <MudGrid Spacing="3" Class="mb-6">
-        <MudItem xs="12" sm="4">
-            <MudCard Elevation="0" Class="tierra-card h-100 d-flex flex-column justify-space-between">
-                <MudCardContent Class="pa-6">
-                    <div class="pa-3 mb-4 rounded-lg d-inline-block" style="background: #FDEEEB; color: #D9483B;">
-                        <MudIcon Icon="@Icons.Material.Rounded.School" Size="Size.Large" />
+        <!-- Interactive Practice (Quiz) Card -->
+        <MudItem xs="12" md="6">
+            <MudPaper Elevation="0" Class="tierra-card-subtle pa-6 h-100 d-flex flex-column justify-space-between">
+                <div>
+                    <div class="d-flex align-center justify-space-between mb-3">
+                        <span style="font-size: 0.78rem; font-weight: 700; color: #E0872E; text-transform: uppercase; letter-spacing: 0.04em;">
+                            Práctica Rápida
+                        </span>
+                        <MudIcon Icon="@Icons.Material.Rounded.Quiz" Size="Size.Small" Style="color: #E0872E;" />
                     </div>
-                    <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 700;">Aprender Vocabulario</MudText>
-                    <MudText Typo="Typo.body2" Style="color: #57534E; line-height: 1.5;">
-                        Estudia tarjetas interactivas organizadas por frecuencia natural de uso con audio nativo.
+                    <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 700; color: #1C1917;">
+                        Cuestionario Interactivo
                     </MudText>
-                </MudCardContent>
-                <div class="px-6 pb-6 pt-0">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="learn" FullWidth="true"
-                               StartIcon="@Icons.Material.Rounded.PlayArrow" Style="border-radius: 10px; font-weight: 700; text-transform: none;">
-                        Iniciar Estudio
-                    </MudButton>
+                    <MudText Typo="Typo.body2" Style="color: #57534E; line-height: 1.5;" Class="mb-4">
+                        Comprueba tu retención con retos de opción múltiple, rachas de aciertos y atajos de teclado rápidos.
+                    </MudText>
                 </div>
-            </MudCard>
-        </MudItem>
-
-        <MudItem xs="12" sm="4">
-            <MudCard Elevation="0" Class="tierra-card h-100 d-flex flex-column justify-space-between">
-                <MudCardContent Class="pa-6">
-                    <div class="pa-3 mb-4 rounded-lg d-inline-block" style="background: #FEF3E7; color: #E0872E;">
-                        <MudIcon Icon="@Icons.Material.Rounded.Quiz" Size="Size.Large" />
-                    </div>
-                    <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 700;">Práctica y Quiz</MudText>
-                    <MudText Typo="Typo.body2" Style="color: #57534E; line-height: 1.5;">
-                        Pon a prueba tu retención con preguntas de opción múltiple, tiempo y atajos de teclado.
-                    </MudText>
-                </MudCardContent>
-                <div class="px-6 pb-6 pt-0">
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="quiz" FullWidth="true"
-                               StartIcon="@Icons.Material.Rounded.CheckCircle" Style="border-radius: 10px; font-weight: 700; text-transform: none; color: #FFFFFF;">
+                <div>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Href="quiz" FullWidth="true"
+                               StartIcon="@Icons.Material.Rounded.CheckCircle"
+                               Style="border-radius: 10px; font-weight: 700; text-transform: none; border-color: #D9483B; height: 44px;">
                         Hacer Cuestionario
                     </MudButton>
                 </div>
-            </MudCard>
+            </MudPaper>
         </MudItem>
 
-        <MudItem xs="12" sm="4">
-            <MudCard Elevation="0" Class="tierra-card h-100 d-flex flex-column justify-space-between">
-                <MudCardContent Class="pa-6">
-                    <div class="pa-3 mb-4 rounded-lg d-inline-block" style="background: #F3EFEA; color: #1E293B;">
-                        <MudIcon Icon="@Icons.Material.Rounded.Analytics" Size="Size.Large" />
+        <!-- Featured Word / Discovery Card -->
+        <MudItem xs="12" md="6">
+            <MudPaper Elevation="0" Class="tierra-card pa-6 h-100 d-flex flex-column justify-space-between">
+                @if (_featuredWord != null)
+                {
+                    <div>
+                        <div class="d-flex justify-space-between align-center mb-3">
+                            <span style="font-size: 0.78rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">
+                                Palabra del Momento
+                            </span>
+                            <span class="tabular-numbers" style="font-size: 0.75rem; font-weight: 600; color: #78716C;">
+                                Frecuencia #@_featuredWord.FrequencyRank
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-start justify-space-between gap-3 mb-2">
+                            <div>
+                                <div class="d-flex align-baseline gap-2">
+                                    <span style="font-size: 1.75rem; font-weight: 800; color: #1C1917; line-height: 1.2;">
+                                        @_featuredWord.Spanish
+                                    </span>
+                                    <span style="font-size: 0.82rem; font-weight: 500; color: #78716C; font-style: italic;">
+                                        @_featuredWord.PartOfSpeech
+                                    </span>
+                                </div>
+                                <span style="font-size: 1rem; color: #D9483B; font-weight: 600;">
+                                    @_featuredWord.English
+                                </span>
+                            </div>
+                            <button class="audio-btn" @onclick="PlayFeaturedAudio" title="Escuchar pronunciación">
+                                <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                            </button>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(_featuredWord.ExampleSentence))
+                        {
+                            <div class="literary-example">
+                                <div class="literary-example-quote">
+                                    "@_featuredWord.ExampleSentence"
+                                </div>
+                                <div class="literary-example-translation">
+                                    @_featuredWord.ExampleTranslation
+                                </div>
+                            </div>
+                        }
                     </div>
-                    <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 700;">Estadísticas</MudText>
-                    <MudText Typo="Typo.body2" Style="color: #57534E; line-height: 1.5;">
-                        Analiza tu precisión, filtra palabras difíciles y visualiza tu tasa de retención a largo plazo.
-                    </MudText>
-                </MudCardContent>
-                <div class="px-6 pb-6 pt-0">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="statistics" FullWidth="true"
-                               StartIcon="@Icons.Material.Rounded.TrendingUp" Style="border-radius: 10px; font-weight: 700; text-transform: none; border-color: #EBE6DE;">
-                        Ver Estadísticas
-                    </MudButton>
+                }
+                else
+                {
+                    <div>
+                        <MudText Typo="Typo.h6" Style="font-weight: 700;">Descubrimiento</MudText>
+                        <MudText Typo="Typo.body2" Style="color: #57534E;">Cargando vocabulario...</MudText>
+                    </div>
+                }
+
+                <div class="pt-3">
+                    <a href="learn" class="d-inline-flex align-center gap-1 text-decoration-none" style="color: #D9483B; font-size: 0.85rem; font-weight: 700;">
+                        <span>Estudiar más palabras</span>
+                        <MudIcon Icon="@Icons.Material.Rounded.ArrowForward" Size="Size.Small" />
+                    </a>
                 </div>
-            </MudCard>
+            </MudPaper>
         </MudItem>
     </MudGrid>
+
+    <!-- Deep Dive Statistics Link Footer -->
+    <div class="text-center py-2">
+        <a href="statistics" class="d-inline-flex align-center gap-2 text-decoration-none" style="color: #78716C; font-size: 0.88rem; font-weight: 600;">
+            <MudIcon Icon="@Icons.Material.Rounded.Analytics" Size="Size.Small" />
+            <span>Ver historial completo de palabras y estadísticas detalladas</span>
+            <MudIcon Icon="@Icons.Material.Rounded.ChevronRight" Size="Size.Small" />
+        </a>
+    </div>
 }
 
 @code {
