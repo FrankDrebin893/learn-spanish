@@ -1,60 +1,261 @@
+/* Tierra y Sol - Spanish Word Learning App Design Tokens */
+:root {
+    --color-primary: #D9483B;
+    --color-primary-hover: #C13D30;
+    --color-primary-light: #FDEEEB;
+    --color-secondary: #E0872E;
+    --color-secondary-light: #FEF3E7;
+    --color-accent: #1E293B;
+    --color-success: #16A34A;
+    --color-success-light: #ECFDF5;
+    --color-warning: #D97706;
+    --color-bg: #FAF8F5;
+    --color-surface: #FFFFFF;
+    --color-border: #EBE6DE;
+    --color-border-subtle: #F3EFEA;
+    --color-text-primary: #1C1917;
+    --color-text-secondary: #57534E;
+    --color-text-muted: #78716C;
+    --shadow-sm: 0 1px 3px rgba(60, 40, 20, 0.04), 0 1px 2px rgba(60, 40, 20, 0.02);
+    --shadow-md: 0 4px 16px -2px rgba(60, 40, 20, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 25px -4px rgba(60, 40, 20, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --radius-full: 9999px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html, body {
-    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #F8FAFC;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.border-b {
-    border-bottom: 1px solid #E2E8F0 !important;
+/* Warm Elegant App Loader */
+.app-loader {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #FAF8F5 0%, #F5F0E8 100%);
+    padding: 24px;
 }
 
-.border-t {
-    border-top: 1px solid #E2E8F0 !important;
+.loader-content {
+    text-align: center;
+    max-width: 360px;
+    animation: fadeIn 0.4s ease-out;
 }
 
-.rounded-xl {
-    border-radius: 16px !important;
+.loader-logo {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    background: #B91C1C;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.h-100 {
+.logo-accent {
+    color: #FFFFFF;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    font-family: 'Outfit', sans-serif;
+}
+
+.loader-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+}
+
+.loader-subtitle {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin: 0 0 20px;
+    font-weight: 400;
+}
+
+.loader-bar {
+    width: 180px;
+    height: 4px;
+    background: #EBE6DE;
+    border-radius: 4px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.loader-progress {
+    width: 100%;
     height: 100%;
+    background: var(--color-primary);
+    border-radius: 4px;
+    animation: pulseOpacity 1.6s ease-in-out infinite;
 }
 
-.text-left {
-    text-align: left !important;
+@keyframes pulseOpacity {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
 }
 
-/* Error boundary */
-.blazor-error-boundary {
-    background: #EF4444;
-    padding: 1rem;
-    color: white;
-    border-radius: 8px;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.blazor-error-boundary::after {
-    content: "An error has occurred."
+/* Card Enhancements */
+.tierra-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
+.tierra-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #DFD7CC;
+}
+
+/* Flashcard Styles */
+.flashcard-container {
+    perspective: 1000px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.flashcard-inner {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    padding: 36px 28px;
+    min-height: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.word-display {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-align: center;
+    letter-spacing: -0.02em;
+    margin: 12px 0;
+    word-break: break-word;
+}
+
+.translation-display {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-align: center;
+    margin: 8px 0 16px;
+    line-height: 1.3;
+}
+
+/* Spanish Audio Button */
+.audio-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.audio-btn:hover {
+    background: #FBDDD7;
+    transform: scale(1.08);
+}
+
+.audio-btn:active {
+    transform: scale(0.95);
+}
+
+/* Keyboard Shortcut Pills */
+.kbd-pill {
+    background: #F3EFEA;
+    border: 1px solid #DFD8CD;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    font-family: inherit;
+}
+
+/* Quiz Option Buttons */
+.quiz-option-btn {
+    border-radius: var(--radius-md) !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    font-size: 1.05rem !important;
+    letter-spacing: 0 !important;
+    border: 1.5px solid var(--color-border) !important;
+    transition: all 0.15s ease !important;
+    background: var(--color-surface) !important;
+}
+
+.quiz-option-btn:hover:not([disabled]) {
+    border-color: var(--color-primary) !important;
+    background: var(--color-primary-light) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Blazor Error Banner */
 #blazor-error-ui {
     display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 1rem;
-    background: #EF4444;
-    color: white;
+    padding: 14px 20px;
+    background: #1C1917;
+    color: #FAF8F5;
+    font-size: 14px;
     text-align: center;
-    z-index: 9999;
+    z-index: 99999;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
 }
 
 #blazor-error-ui .reload {
-    color: white;
+    color: #F87171;
+    font-weight: 600;
     text-decoration: underline;
-    margin-left: 1rem;
+    margin-left: 12px;
+    cursor: pointer;
 }
 
 #blazor-error-ui .dismiss {
+    color: #9CA3AF;
+    margin-left: 16px;
     cursor: pointer;
-    margin-left: 1rem;
 }

@@ -1,71 +1,140 @@
 @inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject SpanishWordLearner.Services.ProgressService ProgressService
 
 <MudThemeProvider Theme="_theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <MudMainContent Style="padding-bottom: 80px;">
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-8 mt-4">
+<MudLayout Style="background-color: #FAF8F5; min-height: 100vh;">
+    <!-- Top Navigation Bar (Desktop & Tablet) -->
+    <MudAppBar Elevation="0" Style="background: #FFFFFF; border-bottom: 1px solid #EBE6DE; height: 68px;" Fixed="true">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex align-center justify-space-between px-2 px-md-4">
+            <!-- Brand -->
+            <a href="" class="d-flex align-center text-decoration-none" style="gap: 12px; color: inherit;">
+                <div style="width: 38px; height: 38px; background: linear-gradient(135deg, #D9483B 0%, #E0872E 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(217, 72, 59, 0.25);">
+                    <span style="color: #FFFFFF; font-weight: 800; font-size: 20px; line-height: 1; font-family: 'Outfit', sans-serif;">ñ</span>
+                </div>
+                <div>
+                    <span style="font-weight: 700; font-size: 1.15rem; color: #1C1917; letter-spacing: -0.02em; display: block; line-height: 1.2;">Aprende Español</span>
+                    <span style="font-size: 0.72rem; color: #78716C; font-weight: 500; display: block; letter-spacing: 0.02em;">VOCABULARIO ESENCIAL</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <div class="d-none d-md-flex align-center" style="gap: 8px;">
+                <MudButton Variant="@GetNavVariant("/")" Color="@GetNavColor("/")" Href="" StartIcon="@Icons.Material.Rounded.Home"
+                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                    Inicio
+                </MudButton>
+                <MudButton Variant="@GetNavVariant("/learn")" Color="@GetNavColor("/learn")" Href="learn" StartIcon="@Icons.Material.Rounded.School"
+                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                    Aprender
+                </MudButton>
+                <MudButton Variant="@GetNavVariant("/quiz")" Color="@GetNavColor("/quiz")" Href="quiz" StartIcon="@Icons.Material.Rounded.Quiz"
+                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                    Práctica
+                </MudButton>
+                <MudButton Variant="@GetNavVariant("/statistics")" Color="@GetNavColor("/statistics")" Href="statistics" StartIcon="@Icons.Material.Rounded.Analytics"
+                           Class="px-4 py-2" Style="border-radius: 10px; text-transform: none; font-weight: 600; font-size: 0.95rem;">
+                    Progreso
+                </MudButton>
+            </div>
+
+            <!-- Header Quick Badge -->
+            <div class="d-flex align-center" style="gap: 12px;">
+                <div class="d-flex align-center px-3 py-1" style="background: #FEF3E7; border: 1px solid #FCD34D; border-radius: 20px; gap: 6px;">
+                    <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706;" />
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #B45309;">@_learnedCount Palabras</span>
+                </div>
+            </div>
+        </MudContainer>
+    </MudAppBar>
+
+    <!-- Main Page Content Area -->
+    <MudMainContent Style="padding-top: 84px; padding-bottom: 96px;">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-4">
             @Body
         </MudContainer>
     </MudMainContent>
 
-    <MudAppBar Bottom="true" Elevation="1" Color="Color.Surface" Fixed="true" Dense="true">
-        <MudSpacer />
-        <MudButtonGroup OverrideStyles="false">
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/" StartIcon="@Icons.Material.Rounded.Home" Class="mx-1">
-                Home
-            </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/learn" StartIcon="@Icons.Material.Rounded.School" Class="mx-1">
-                Learn
-            </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/quiz" StartIcon="@Icons.Material.Rounded.Quiz" Class="mx-1">
-                Quiz
-            </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/statistics" StartIcon="@Icons.Material.Rounded.Analytics" Class="mx-1">
-                Stats
-            </MudButton>
-        </MudButtonGroup>
-        <MudSpacer />
-    </MudAppBar>
+    <!-- Mobile Bottom Navigation Bar -->
+    <div class="d-flex d-md-none fixed-bottom" style="position: fixed; bottom: 0; left: 0; right: 0; background: #FFFFFF; border-top: 1px solid #EBE6DE; height: 64px; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.03);">
+        <div class="d-flex justify-space-around align-center w-100 px-2">
+            <a href="" class="d-flex flex-column align-center text-decoration-none py-1" style="color: @(IsActive("/") ? "#D9483B" : "#78716C");">
+                <MudIcon Icon="@Icons.Material.Rounded.Home" Size="Size.Medium" />
+                <span style="font-size: 0.72rem; font-weight: 600;">Inicio</span>
+            </a>
+            <a href="learn" class="d-flex flex-column align-center text-decoration-none py-1" style="color: @(IsActive("/learn") ? "#D9483B" : "#78716C");">
+                <MudIcon Icon="@Icons.Material.Rounded.School" Size="Size.Medium" />
+                <span style="font-size: 0.72rem; font-weight: 600;">Aprender</span>
+            </a>
+            <a href="quiz" class="d-flex flex-column align-center text-decoration-none py-1" style="color: @(IsActive("/quiz") ? "#D9483B" : "#78716C");">
+                <MudIcon Icon="@Icons.Material.Rounded.Quiz" Size="Size.Medium" />
+                <span style="font-size: 0.72rem; font-weight: 600;">Práctica</span>
+            </a>
+            <a href="statistics" class="d-flex flex-column align-center text-decoration-none py-1" style="color: @(IsActive("/statistics") ? "#D9483B" : "#78716C");">
+                <MudIcon Icon="@Icons.Material.Rounded.Analytics" Size="Size.Medium" />
+                <span style="font-size: 0.72rem; font-weight: 600;">Progreso</span>
+            </a>
+        </div>
+    </div>
 </MudLayout>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">X</span>
-</div>
-
 @code {
-    private MudTheme _theme = new MudTheme
+    private int _learnedCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var progress = await ProgressService.GetProgressAsync();
+        _learnedCount = progress.TotalWordsLearned;
+    }
+
+    private bool IsActive(string href)
+    {
+        var uri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        if (string.IsNullOrEmpty(uri) || uri == "/")
+            return href == "/";
+        return href.TrimStart('/') == uri.Split('?')[0];
+    }
+
+    private Variant GetNavVariant(string href) => IsActive(href) ? Variant.Filled : Variant.Text;
+    private Color GetNavColor(string href) => IsActive(href) ? Color.Primary : Color.Default;
+
+    private readonly MudTheme _theme = new()
     {
         PaletteLight = new PaletteLight
         {
-            Primary = "#4F46E5",
-            Secondary = "#0D9488",
-            Tertiary = "#0F766E",
-            Success = "#059669",
+            Primary = "#D9483B",
+            PrimaryDarken = "#BF3A2E",
+            PrimaryLighten = "#FDEEEB",
+            Secondary = "#E0872E",
+            SecondaryDarken = "#B45309",
+            SecondaryLighten = "#FEF3E7",
+            Tertiary = "#1E293B",
+            Success = "#16A34A",
             Error = "#DC2626",
             Warning = "#D97706",
             Info = "#2563EB",
-            Background = "#F8FAFC",
+            Background = "#FAF8F5",
             Surface = "#FFFFFF",
             AppbarBackground = "#FFFFFF",
-            TextPrimary = "#0F172A",
-            TextSecondary = "#475569"
+            TextPrimary = "#1C1917",
+            TextSecondary = "#57534E",
+            LinesDefault = "#EBE6DE",
+            Divider = "#EBE6DE"
         },
         Typography = new Typography
         {
             Default = new DefaultTypography
             {
-                FontFamily = new[] { "Inter", "Helvetica", "Arial", "sans-serif" }
+                FontFamily = new[] { "Outfit", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif" }
             }
         },
         LayoutProperties = new LayoutProperties
         {
-            DefaultBorderRadius = "12px"
+            DefaultBorderRadius = "14px"
         }
     };
 }

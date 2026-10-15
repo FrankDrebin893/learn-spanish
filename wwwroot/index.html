@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Aprende Español | Spanish Vocabulary Mastery</title>
+    <meta name="description" content="Master the 10,000 most common Spanish words with frequency-based flashcards, native audio pronunciation, and interactive quizzes." />
+    <base href="/" />
+    
+    <!-- GitHub Pages Single Page App Redirect Restore -->
+    <script type="text/javascript">
+        // Single Page Apps for GitHub Pages
+        // MIT License: https://github.com/rafgraph/spa-github-pages
+        (function(l) {
+            if (l.search[1] === '/' ) {
+                var decoded = l.search.slice(1).split('&').map(function(s) { 
+                    return s.replace(/~and~/g, '&') 
+                }).join('?');
+                window.history.replaceState(null, null,
+                    l.pathname.slice(0, -1) + decoded + l.hash
+                );
+            }
+        }(window.location))
+    </script>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- MudBlazor Styles -->
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="app.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+</head>
+
+<body>
+    <div id="app">
+        <div class="app-loader">
+            <div class="loader-content">
+                <div class="loader-logo">
+                    <span class="logo-accent">ñ</span>
+                </div>
+                <h1 class="loader-title">Aprende Español</h1>
+                <p class="loader-subtitle">Cargando vocabulario...</p>
+                <div class="loader-bar">
+                    <div class="loader-progress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="blazor-error-ui">
+        Ha ocurrido un error inesperado.
+        <a href="" class="reload">Recargar</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    
+    <!-- Native Spanish Web Speech API & Keyboard Handlers -->
+    <script>
+        window.spanishSpeech = {
+            speak: function(text) {
+                if (!window.speechSynthesis) return;
+                try {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'es-ES';
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.0;
+                    
+                    // Prefer native Spanish voice if available
+                    const voices = window.speechSynthesis.getVoices();
+                    const esVoice = voices.find(v => v.lang.startsWith('es') && !v.name.includes('Google') && !v.name.includes('eSpeak')) 
+                                 || voices.find(v => v.lang.startsWith('es'));
+                    if (esVoice) utterance.voice = esVoice;
+
+                    window.speechSynthesis.speak(utterance);
+                } catch (e) {
+                    console.warn('Speech synthesis error:', e);
+                }
+            }
+        };
+
+        window.quizKeyboardHandler = {
+            dotNetRef: null,
+            handler: null,
+            init: function(dotNetRef) {
+                this.dotNetRef = dotNetRef;
+                this.handler = (e) => {
+                    if (['1', '2', '3', '4', 'Enter', ' '].includes(e.key)) {
+                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                            return;
+                        }
+                        e.preventDefault();
+                        this.dotNetRef.invokeMethodAsync('HandleKeyDown', e.key);
+                    }
+                };
+                document.addEventListener('keydown', this.handler);
+            },
+            dispose: function() {
+                if (this.handler) {
+                    document.removeEventListener('keydown', this.handler);
+                    this.handler = null;
+                }
+                this.dotNetRef = null;
+            }
+        };
+
+        window.learnKeyboardHandler = {
+            dotNetRef: null,
+            handler: null,
+            init: function(dotNetRef) {
+                this.dotNetRef = dotNetRef;
+                this.handler = (e) => {
+                    if (['1', '2', 'Enter', ' ', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                            return;
+                        }
+                        e.preventDefault();
+                        this.dotNetRef.invokeMethodAsync('HandleKeyDown', e.key);
+                    }
+                };
+                document.addEventListener('keydown', this.handler);
+            },
+            dispose: function() {
+                if (this.handler) {
+                    document.removeEventListener('keydown', this.handler);
+                    this.handler = null;
+                }
+                this.dotNetRef = null;
+            }
+        };
+    </script>
+</body>
+
+</html>

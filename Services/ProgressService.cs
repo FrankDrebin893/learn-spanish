@@ -1,49 +1,63 @@
-using LiteDB;
+using System.Text.Json;
+using Microsoft.JSInterop;
 using SpanishWordLearner.Models;
 
 namespace SpanishWordLearner.Services;
 
-public class ProgressService : IDisposable
+public class ProgressService
 {
-    private readonly LiteDatabase _db;
-    private readonly ILiteCollection<UserProgress> _progressCollection;
+    private const string StorageKey = "spanish_word_learner_progress";
+    private readonly IJSRuntime? _js;
     private UserProgress? _cachedProgress;
+    private bool _isInitialized;
 
-    public string DatabasePath { get; }
-
-    public ProgressService()
+    public ProgressService(IJSRuntime? js = null)
     {
-        DatabasePath = GetDatabasePath();
-
-        // Ensure directory exists
-        var directory = Path.GetDirectoryName(DatabasePath)!;
-        Directory.CreateDirectory(directory);
-
-        _db = new LiteDatabase(DatabasePath);
-        _progressCollection = _db.GetCollection<UserProgress>("progress");
+        _js = js;
     }
 
-    private static string GetDatabasePath()
+    public async Task<UserProgress> GetProgressAsync()
     {
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var appFolder = Path.Combine(appData, "SpanishWordLearner");
-        return Path.Combine(appFolder, "progress.db");
+        if (_cachedProgress != null && _isInitialized)
+            return _cachedProgress;
+
+        if (_js != null)
+        {
+            try
+            {
+                var json = await _js.InvokeAsync<string?>("localStorage.getItem", StorageKey);
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    _cachedProgress = JsonSerializer.Deserialize<UserProgress>(json);
+                }
+            }
+            catch
+            {
+                // Fallback gracefully if localStorage is unavailable (e.g. disabled, SSR, or testing)
+            }
+        }
+
+        _cachedProgress ??= new UserProgress();
+        _isInitialized = true;
+        return _cachedProgress;
     }
 
-    public Task<UserProgress> GetProgressAsync()
-    {
-        if (_cachedProgress != null)
-            return Task.FromResult(_cachedProgress);
-
-        _cachedProgress = _progressCollection.FindById(1) ?? new UserProgress();
-        return Task.FromResult(_cachedProgress);
-    }
-
-    public Task SaveProgressAsync(UserProgress progress)
+    public async Task SaveProgressAsync(UserProgress progress)
     {
         _cachedProgress = progress;
-        _progressCollection.Upsert(progress);
-        return Task.CompletedTask;
+
+        if (_js != null)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(progress);
+                await _js.InvokeVoidAsync("localStorage.setItem", StorageKey, json);
+            }
+            catch
+            {
+                // In-memory progress preserved even if storage fails
+            }
+        }
     }
 
     public async Task RecordAnswerAsync(int wordId, bool correct)
@@ -77,16 +91,20 @@ public class ProgressService : IDisposable
         await SaveProgressAsync(progress);
     }
 
-    public Task ResetProgressAsync()
+    public async Task ResetProgressAsync()
     {
         _cachedProgress = new UserProgress();
-        _progressCollection.Delete(1);
-        _progressCollection.Insert(_cachedProgress);
-        return Task.CompletedTask;
-    }
 
-    public void Dispose()
-    {
-        _db.Dispose();
+        if (_js != null)
+        {
+            try
+            {
+                await _js.InvokeVoidAsync("localStorage.removeItem", StorageKey);
+            }
+            catch
+            {
+                // Fallback gracefully
+            }
+        }
     }
 }

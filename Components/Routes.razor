@@ -1,8 +1,19 @@
-﻿@rendermode InteractiveServer
-
 <Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+            <MudContainer MaxWidth="MaxWidth.Small" Class="text-center py-12">
+                <MudText Typo="Typo.h3" Class="mb-4" Style="font-weight: 700;">404</MudText>
+                <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-6">
+                    Página no encontrada / Page not found.
+                </MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" StartIcon="@Icons.Material.Rounded.Home">
+                    Volver al inicio / Go Home
+                </MudButton>
+            </MudContainer>
+        </LayoutView>
+    </NotFound>
 </Router>

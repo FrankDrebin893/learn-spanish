@@ -1,35 +1,81 @@
+using System.Net.Http.Json;
+using System.Text.Json;
 using SpanishWordLearner.Models;
 
 namespace SpanishWordLearner.Services;
 
 public class WordService
 {
-    private readonly List<SpanishWord> _words;
-    private readonly string _dataSource;
+    private List<SpanishWord> _words;
+    private string _dataSource;
+    private readonly HttpClient? _http;
+    private bool _initialized;
 
-    public WordService(IWebHostEnvironment env)
+    public event Action? OnWordsLoaded;
+
+    public WordService(HttpClient? http = null)
     {
-        // Try to load from spanish_data repository files
-        var basePath = env.ContentRootPath;
-        var frequencyPath = Path.Combine(basePath, "spanish_data", "frequency.csv");
-        var dictionaryPath = Path.Combine(basePath, "spanish_data", "es-en.data");
+        _http = http;
+        _words = GetFallbackWords();
+        _dataSource = "embedded fallback data";
+    }
 
-        if (File.Exists(frequencyPath) && File.Exists(dictionaryPath))
+    public async Task InitializeAsync()
+    {
+        if (_initialized) return;
+
+        // In Blazor WebAssembly, fetch from static asset
+        if (_http != null)
         {
-            _words = DataLoader.LoadFromFiles(frequencyPath, dictionaryPath);
-            _dataSource = "spanish_data repository";
-        }
-        else
-        {
-            _words = GetFallbackWords();
-            _dataSource = "embedded fallback data";
+            try
+            {
+                var loaded = await _http.GetFromJsonAsync<List<SpanishWord>>("data/words.json");
+                if (loaded != null && loaded.Count > 0)
+                {
+                    _words = loaded;
+                    _dataSource = "bundled vocabulary dataset";
+                    _initialized = true;
+                    OnWordsLoaded?.Invoke();
+                    return;
+                }
+            }
+            catch
+            {
+                // Fall back gracefully to local file or embedded fallback
+            }
         }
 
-        if (_words.Count == 0)
+        // Check local disk if running in test environment
+        try
         {
-            _words = GetFallbackWords();
-            _dataSource = "embedded fallback data";
+            var candidates = new[]
+            {
+                Path.Combine("wwwroot", "data", "words.json"),
+                Path.Combine("..", "..", "..", "..", "wwwroot", "data", "words.json")
+            };
+            foreach (var path in candidates)
+            {
+                if (File.Exists(path))
+                {
+                    var json = await File.ReadAllTextAsync(path);
+                    var words = JsonSerializer.Deserialize<List<SpanishWord>>(json);
+                    if (words != null && words.Count > 0)
+                    {
+                        _words = words;
+                        _dataSource = "bundled vocabulary dataset";
+                        _initialized = true;
+                        OnWordsLoaded?.Invoke();
+                        return;
+                    }
+                }
+            }
         }
+        catch
+        {
+            // Ignore file errors
+        }
+
+        _initialized = true;
     }
 
     public string DataSource => _dataSource;
@@ -50,6 +96,7 @@ public class WordService
     }
 
     public int TotalWordCount => _words.Count;
+    public bool IsLoaded => _initialized;
 
     private static List<SpanishWord> GetFallbackWords()
     {

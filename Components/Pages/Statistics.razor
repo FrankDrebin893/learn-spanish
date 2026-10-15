@@ -3,101 +3,112 @@
 @using SpanishWordLearner.Services
 @inject WordService WordService
 @inject ProgressService ProgressService
-@rendermode InteractiveServer
+@inject IJSRuntime JS
 
-<PageTitle>Statistics</PageTitle>
+<PageTitle>Estadísticas de Aprendizaje | Aprende Español</PageTitle>
 
-<MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600;">Your Statistics</MudText>
+<div class="mb-6">
+    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917;" Class="mb-1">Tus Estadísticas</MudText>
+    <MudText Typo="Typo.body2" Style="color: #78716C;">
+        Métricas detalladas de retención, precisión y rendimiento de vocabulario.
+    </MudText>
+</div>
 
 @if (_loading)
 {
-    <div class="d-flex justify-center py-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    <div class="d-flex justify-center py-12">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
     </div>
 }
 else
 {
+    <!-- Top 4 Summary Metric Cards -->
     <MudGrid Spacing="3" Class="mb-6">
         <MudItem xs="6" sm="3">
-            <MudPaper Elevation="0" Class="pa-4 rounded-lg text-center" Style="border: 1px solid #E2E8F0;">
-                <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 600;">@_progress.TotalWordsLearned</MudText>
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Learned</MudText>
+            <MudPaper Elevation="0" Class="tierra-card pa-4 text-center">
+                <MudText Typo="Typo.h4" Style="font-weight: 800; color: #D9483B;">@_progress.TotalWordsLearned</MudText>
+                <MudText Typo="Typo.caption" Style="font-weight: 700; color: #78716C; text-transform: uppercase;">Dominadas</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="3">
-            <MudPaper Elevation="0" Class="pa-4 rounded-lg text-center" Style="border: 1px solid #E2E8F0;">
-                <MudText Typo="Typo.h4" Color="Color.Info" Style="font-weight: 600;">@_progress.WordStats.Count</MudText>
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Seen</MudText>
+            <MudPaper Elevation="0" Class="tierra-card pa-4 text-center">
+                <MudText Typo="Typo.h4" Style="font-weight: 800; color: #E0872E;">@_progress.WordStats.Count</MudText>
+                <MudText Typo="Typo.caption" Style="font-weight: 700; color: #78716C; text-transform: uppercase;">Estudiadas</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="3">
-            <MudPaper Elevation="0" Class="pa-4 rounded-lg text-center" Style="border: 1px solid #E2E8F0;">
-                <MudText Typo="Typo.h4" Color="Color.Success" Style="font-weight: 600;">@_progress.TotalQuizzesTaken</MudText>
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Quizzes</MudText>
+            <MudPaper Elevation="0" Class="tierra-card pa-4 text-center">
+                <MudText Typo="Typo.h4" Style="font-weight: 800; color: #16A34A;">@_progress.TotalQuizzesTaken</MudText>
+                <MudText Typo="Typo.caption" Style="font-weight: 700; color: #78716C; text-transform: uppercase;">Cuestionarios</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="3">
-            <MudPaper Elevation="0" Class="pa-4 rounded-lg text-center" Style="border: 1px solid #E2E8F0;">
-                <MudText Typo="Typo.h4" Color="Color.Warning" Style="font-weight: 600;">@(_progress.OverallAccuracy.ToString("F0"))%</MudText>
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Accuracy</MudText>
+            <MudPaper Elevation="0" Class="tierra-card pa-4 text-center">
+                <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1E293B;">@((_progress.OverallAccuracy * 100).ToString("F0"))%</MudText>
+                <MudText Typo="Typo.caption" Style="font-weight: 700; color: #78716C; text-transform: uppercase;">Precisión</MudText>
             </MudPaper>
         </MudItem>
     </MudGrid>
 
+    <!-- Progress Breakdown & History -->
     <MudGrid Spacing="3" Class="mb-6">
         <MudItem xs="12" md="6">
-            <MudPaper Elevation="0" Class="pa-4 rounded-lg" Style="border: 1px solid #E2E8F0; height: 100%;">
-                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 500;">Learning Progress</MudText>
+            <MudPaper Elevation="0" Class="tierra-card pa-5 h-100">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 700;">Cobertura de Vocabulario</MudText>
 
                 <div class="mb-4">
-                    <div class="d-flex justify-space-between mb-1">
-                        <MudText Typo="Typo.body2">Words Learned</MudText>
-                        <MudText Typo="Typo.body2" Color="Color.Secondary">
-                            @_progress.TotalWordsLearned / @WordService.TotalWordCount
-                        </MudText>
+                    <div class="d-flex justify-space-between mb-1" style="font-size: 0.85rem; font-weight: 600;">
+                        <span>Palabras Dominadas</span>
+                        <span style="color: #16A34A;">@_progress.TotalWordsLearned / @WordService.TotalWordCount</span>
                     </div>
-                    <MudProgressLinear Color="Color.Success" Rounded="true" Value="@(_progress.TotalWordsLearned * 100.0 / WordService.TotalWordCount)" />
+                    <MudProgressLinear Color="Color.Success" Rounded="true"
+                                       Value="@(_progress.TotalWordsLearned * 100.0 / Math.Max(1, WordService.TotalWordCount))"
+                                       Style="height: 8px; background-color: #EBE6DE;" />
                 </div>
 
                 <div>
-                    <div class="d-flex justify-space-between mb-1">
-                        <MudText Typo="Typo.body2">Words Seen</MudText>
-                        <MudText Typo="Typo.body2" Color="Color.Secondary">
-                            @_progress.WordStats.Count / @WordService.TotalWordCount
-                        </MudText>
+                    <div class="d-flex justify-space-between mb-1" style="font-size: 0.85rem; font-weight: 600;">
+                        <span>Palabras Encontradas</span>
+                        <span style="color: #E0872E;">@_progress.WordStats.Count / @WordService.TotalWordCount</span>
                     </div>
-                    <MudProgressLinear Color="Color.Info" Rounded="true" Value="@(_progress.WordStats.Count * 100.0 / WordService.TotalWordCount)" />
+                    <MudProgressLinear Color="Color.Secondary" Rounded="true"
+                                       Value="@(_progress.WordStats.Count * 100.0 / Math.Max(1, WordService.TotalWordCount))"
+                                       Style="height: 8px; background-color: #EBE6DE;" />
                 </div>
             </MudPaper>
         </MudItem>
+
         <MudItem xs="12" md="6">
-            <MudPaper Elevation="0" Class="pa-4 rounded-lg" Style="border: 1px solid #E2E8F0; height: 100%;">
-                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 500;">Recent Quizzes</MudText>
+            <MudPaper Elevation="0" Class="tierra-card pa-5 h-100">
+                <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 700;">Últimas Pruebas</MudText>
 
                 @if (_progress.QuizHistory.Count == 0)
                 {
-                    <MudText Typo="Typo.body2" Color="Color.Secondary">
-                        No quizzes taken yet. <MudLink Href="/quiz">Take a quiz!</MudLink>
-                    </MudText>
+                    <div class="text-center py-6" style="color: #78716C; font-size: 0.9rem;">
+                        No has realizado cuestionarios aún.
+                        <div class="mt-2">
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="quiz">¡Hacer una prueba!</MudButton>
+                        </div>
+                    </div>
                 }
                 else
                 {
                     <MudSimpleTable Dense="true" Hover="true" Style="background: transparent;">
                         <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Score</th>
-                                <th></th>
+                            <tr style="border-bottom: 1px solid #EBE6DE;">
+                                <th style="font-weight: 700; color: #78716C;">Fecha</th>
+                                <th style="font-weight: 700; color: #78716C;">Aciertos</th>
+                                <th style="font-weight: 700; color: #78716C; text-align: right;">Precisión</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var quiz in _progress.QuizHistory.OrderByDescending(q => q.Date).Take(5))
                             {
-                                <tr>
-                                    <td>@quiz.Date.ToLocalTime().ToString("MMM dd")</td>
-                                    <td>@quiz.CorrectAnswers / @quiz.TotalQuestions</td>
-                                    <td>
-                                        <MudChip T="string" Size="Size.Small" Color="@GetAccuracyChipColor(quiz.Accuracy)">
+                                <tr style="border-bottom: 1px solid #F3EFEA;">
+                                    <td style="font-size: 0.85rem;">@quiz.Date.ToLocalTime().ToString("dd MMM HH:mm")</td>
+                                    <td style="font-size: 0.85rem; font-weight: 600;">@quiz.CorrectAnswers / @quiz.TotalQuestions</td>
+                                    <td style="text-align: right;">
+                                        <MudChip T="string" Size="Size.Small" Color="@GetAccuracyChipColor(quiz.Accuracy)" Variant="Variant.Filled" Style="font-weight: 700;">
                                             @((quiz.Accuracy * 100).ToString("F0"))%
                                         </MudChip>
                                     </td>
@@ -110,58 +121,79 @@ else
         </MudItem>
     </MudGrid>
 
-    <MudPaper Elevation="0" Class="pa-4 rounded-lg mb-6" Style="border: 1px solid #E2E8F0;">
-        <div class="d-flex justify-space-between align-center mb-4">
-            <MudText Typo="Typo.h6" Style="font-weight: 500;">Word Performance</MudText>
-            <MudToggleGroup T="string" Value="_showFilter" ValueChanged="OnFilterChanged" Color="Color.Primary" Size="Size.Small">
-                <MudToggleItem Value="@("all")">All</MudToggleItem>
-                <MudToggleItem Value="@("learned")">Learned</MudToggleItem>
-                <MudToggleItem Value="@("struggling")">Struggling</MudToggleItem>
+    <!-- Word Performance Table with Filter & Search -->
+    <MudPaper Elevation="0" Class="tierra-card pa-5 mb-6">
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center gap-3 mb-4">
+            <div>
+                <MudText Typo="Typo.h6" Style="font-weight: 700;">Rendimiento por Palabra</MudText>
+                <MudText Typo="Typo.caption" Style="color: #78716C;">Historial individual de aciertos y errores</MudText>
+            </div>
+
+            <MudToggleGroup T="string" Value="@_showFilter" ValueChanged="OnFilterChanged" Color="Color.Primary" Size="Size.Small" Style="border-radius: 10px;">
+                <MudToggleItem Value="@("all")">Todas (@_allWordStatsCount)</MudToggleItem>
+                <MudToggleItem Value="@("learned")">Dominadas</MudToggleItem>
+                <MudToggleItem Value="@("struggling")">Difíciles</MudToggleItem>
             </MudToggleGroup>
         </div>
 
         @if (_filteredWords.Count == 0)
         {
-            <MudText Typo="Typo.body2" Color="Color.Secondary" Align="Align.Center" Class="py-4">
-                No words to display. Start learning to see your progress!
-            </MudText>
+            <div class="text-center py-8" style="color: #78716C;">
+                <MudIcon Icon="@Icons.Material.Rounded.SearchOff" Size="Size.Large" Class="mb-2" />
+                <p>No hay palabras en esta categoría aún.</p>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="learn" Class="mt-2" Style="text-transform: none; border-radius: 10px;">
+                    Comenzar a Aprender
+                </MudButton>
+            </div>
         }
         else
         {
-            <MudSimpleTable Dense="true" Hover="true" Striped="true">
+            <MudSimpleTable Dense="true" Hover="true" Style="background: transparent;">
                 <thead>
-                    <tr>
-                        <th>Spanish</th>
-                        <th>English</th>
-                        <th>Reviews</th>
-                        <th>Accuracy</th>
-                        <th>Status</th>
+                    <tr style="border-bottom: 2px solid #EBE6DE;">
+                        <th style="font-weight: 700; color: #1C1917;">Español</th>
+                        <th style="font-weight: 700; color: #1C1917;">Inglés</th>
+                        <th style="font-weight: 700; color: #1C1917;">Repasos</th>
+                        <th style="font-weight: 700; color: #1C1917;">Precisión</th>
+                        <th style="font-weight: 700; color: #1C1917; text-align: right;">Estado</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in _filteredWords.Take(30))
+                    @foreach (var item in _filteredWords.Take(50))
                     {
-                        <tr>
-                            <td><strong style="color: #4F46E5;">@item.Word.Spanish</strong></td>
-                            <td>@item.Word.English</td>
-                            <td>@item.Progress.TimesReviewed</td>
+                        <tr style="border-bottom: 1px solid #F3EFEA;">
                             <td>
-                                <MudProgressLinear Color="@GetAccuracyProgressColor(item.Progress.Accuracy)"
-                                                   Rounded="true" Value="@(item.Progress.Accuracy * 100)"
-                                                   Style="min-width: 60px;" />
+                                <div class="d-flex align-center gap-2">
+                                    <strong style="color: #D9483B; font-size: 1rem;">@item.Word.Spanish</strong>
+                                    <button class="audio-btn" style="width: 26px; height: 26px;" @onclick="@(() => PlayAudio(item.Word.Spanish))" title="Escuchar">
+                                        <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                                    </button>
+                                </div>
                             </td>
-                            <td>
+                            <td style="color: #57534E; font-size: 0.9rem;">@item.Word.English</td>
+                            <td style="font-weight: 600; font-size: 0.85rem;">@item.Progress.TimesReviewed</td>
+                            <td style="min-width: 100px;">
+                                <div class="d-flex align-center gap-2">
+                                    <MudProgressLinear Color="@GetAccuracyProgressColor(item.Progress.Accuracy)"
+                                                       Rounded="true" Value="@(item.Progress.Accuracy * 100)"
+                                                       Style="height: 6px; flex-grow: 1; background-color: #EBE6DE;" />
+                                    <span style="font-size: 0.75rem; font-weight: 600; min-width: 30px;">
+                                        @((item.Progress.Accuracy * 100).ToString("F0"))%
+                                    </span>
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
                                 @if (item.Progress.IsLearned)
                                 {
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Success">Learned</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Filled" Style="font-weight: 700;">Dominada</MudChip>
                                 }
                                 else if (item.Progress.Accuracy < 0.5 && item.Progress.TimesReviewed >= 3)
                                 {
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Error">Struggling</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Filled" Style="font-weight: 700;">Difícil</MudChip>
                                 }
                                 else
                                 {
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Default">Learning</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined" Style="font-weight: 600;">En progreso</MudChip>
                                 }
                             </td>
                         </tr>
@@ -171,41 +203,60 @@ else
         }
     </MudPaper>
 
-    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="ShowResetConfirm"
-               StartIcon="@Icons.Material.Rounded.DeleteForever">
-        Reset All Progress
-    </MudButton>
+    <!-- Danger Zone: Reset Progress -->
+    <div class="d-flex justify-end">
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="ShowResetConfirm"
+                   StartIcon="@Icons.Material.Rounded.DeleteForever"
+                   Style="border-radius: 10px; text-transform: none; font-weight: 600; border-color: #FECACA;">
+            Reiniciar Todo el Progreso
+        </MudButton>
+    </div>
 
+    <!-- Reset Confirmation Dialog -->
     <MudDialog @bind-Visible="_showResetConfirm">
         <TitleContent>
-            <MudText Typo="Typo.h6">Reset Progress?</MudText>
+            <div class="d-flex align-center gap-2">
+                <MudIcon Icon="@Icons.Material.Rounded.Warning" Color="Color.Error" />
+                <MudText Typo="Typo.h6" Style="font-weight: 700;">¿Reiniciar todo el progreso?</MudText>
+            </div>
         </TitleContent>
         <DialogContent>
-            <MudText>Are you sure you want to reset all your progress? This cannot be undone.</MudText>
+            <MudText Typo="Typo.body2" Class="mb-3">
+                Esta acción eliminará permanentemente todas tus palabras dominadas, historial de pruebas y estadísticas guardadas en este navegador.
+            </MudText>
+            <MudText Typo="Typo.caption" Color="Color.Error">
+                Esta acción no se puede deshacer.
+            </MudText>
         </DialogContent>
         <DialogActions>
-            <MudButton OnClick="@(() => _showResetConfirm = false)">Cancel</MudButton>
-            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="ResetProgress">Reset Everything</MudButton>
+            <MudButton OnClick="CancelReset" Variant="Variant.Text">Cancelar</MudButton>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="ConfirmReset" Style="font-weight: 700;">
+                Sí, reiniciar progreso
+            </MudButton>
         </DialogActions>
     </MudDialog>
 }
 
 @code {
-    private UserProgress _progress = new();
     private bool _loading = true;
+    private UserProgress _progress = new();
     private string _showFilter = "all";
+    private int _allWordStatsCount = 0;
     private List<(SpanishWord Word, WordProgress Progress)> _filteredWords = new();
-    private bool _showResetConfirm;
+    private bool _showResetConfirm = false;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            _progress = await ProgressService.GetProgressAsync();
-            UpdateFilteredWords();
-            _loading = false;
-            StateHasChanged();
-        }
+        await LoadProgressData();
+    }
+
+    private async Task LoadProgressData()
+    {
+        _loading = true;
+        _progress = await ProgressService.GetProgressAsync();
+        _allWordStatsCount = _progress.WordStats.Count;
+        UpdateFilteredWords();
+        _loading = false;
     }
 
     private void OnFilterChanged(string filter)
@@ -217,48 +268,51 @@ else
     private void UpdateFilteredWords()
     {
         var allWords = WordService.GetAllWords();
-        var wordProgressList = _progress.WordStats
-            .Select(kvp =>
+        var wordProgressList = new List<(SpanishWord Word, WordProgress Progress)>();
+
+        foreach (var kvp in _progress.WordStats)
+        {
+            var word = allWords.FirstOrDefault(w => w.Id == kvp.Key);
+            if (word != null)
             {
-                var word = allWords.FirstOrDefault(w => w.Id == kvp.Key);
-                return word != null ? (Word: word, Progress: kvp.Value) : default;
-            })
-            .Where(x => x.Word != null)
-            .ToList()!;
+                wordProgressList.Add((word, kvp.Value));
+            }
+        }
 
         _filteredWords = _showFilter switch
         {
             "learned" => wordProgressList.Where(x => x.Progress.IsLearned).ToList(),
-            "struggling" => wordProgressList.Where(x => !x.Progress.IsLearned && x.Progress.Accuracy < 0.5 && x.Progress.TimesReviewed >= 3).ToList(),
-            _ => wordProgressList
+            "struggling" => wordProgressList.Where(x => x.Progress.Accuracy < 0.5 && x.Progress.TimesReviewed >= 3).ToList(),
+            _ => wordProgressList.OrderByDescending(x => x.Progress.LastReviewed).ToList()
         };
+    }
 
-        _filteredWords = _filteredWords.OrderByDescending(x => x.Progress.LastReviewed).ToList();
+    private async Task PlayAudio(string text)
+    {
+        await JS.InvokeVoidAsync("spanishSpeech.speak", text);
     }
 
     private void ShowResetConfirm() => _showResetConfirm = true;
+    private void CancelReset() => _showResetConfirm = false;
 
-    private async Task ResetProgress()
+    private async Task ConfirmReset()
     {
-        await ProgressService.ResetProgressAsync();
-        _progress = new UserProgress();
-        _filteredWords.Clear();
         _showResetConfirm = false;
+        await ProgressService.ResetProgressAsync();
+        await LoadProgressData();
     }
 
     private Color GetAccuracyChipColor(double accuracy) => accuracy switch
     {
-        >= 0.9 => Color.Success,
-        >= 0.7 => Color.Primary,
-        >= 0.5 => Color.Warning,
+        >= 0.8 => Color.Success,
+        >= 0.6 => Color.Warning,
         _ => Color.Error
     };
 
     private Color GetAccuracyProgressColor(double accuracy) => accuracy switch
     {
-        >= 0.9 => Color.Success,
-        >= 0.7 => Color.Primary,
-        >= 0.5 => Color.Warning,
+        >= 0.7 => Color.Success,
+        >= 0.4 => Color.Warning,
         _ => Color.Error
     };
 }

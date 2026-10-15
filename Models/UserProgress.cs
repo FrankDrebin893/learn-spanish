@@ -1,22 +1,21 @@
-using LiteDB;
+using System.Text.Json.Serialization;
 
 namespace SpanishWordLearner.Models;
 
 public class UserProgress
 {
-    [BsonId]
-    public int Id { get; set; } = 1; // Single user, always ID 1
+    public int Id { get; set; } = 1;
 
     public Dictionary<int, WordProgress> WordStats { get; set; } = new();
     public List<QuizSession> QuizHistory { get; set; } = new();
 
-    [BsonIgnore]
+    [JsonIgnore]
     public int TotalWordsLearned => WordStats.Count(w => w.Value.IsLearned);
 
-    [BsonIgnore]
+    [JsonIgnore]
     public int TotalQuizzesTaken => QuizHistory.Count;
 
-    [BsonIgnore]
+    [JsonIgnore]
     public double OverallAccuracy => QuizHistory.Count > 0
         ? QuizHistory.Average(q => q.Accuracy)
         : 0;
@@ -31,10 +30,10 @@ public class WordProgress
     public DateTime LastReviewed { get; set; }
     public DateTime FirstSeen { get; set; }
 
-    [BsonIgnore]
+    [JsonIgnore]
     public bool IsLearned => TimesCorrect >= 3 && Accuracy >= 0.7;
 
-    [BsonIgnore]
+    [JsonIgnore]
     public double Accuracy => TimesReviewed > 0
         ? (double)TimesCorrect / TimesReviewed
         : 0;
@@ -46,7 +45,7 @@ public class QuizSession
     public int TotalQuestions { get; set; }
     public int CorrectAnswers { get; set; }
 
-    [BsonIgnore]
+    [JsonIgnore]
     public double Accuracy => TotalQuestions > 0
         ? (double)CorrectAnswers / TotalQuestions
         : 0;

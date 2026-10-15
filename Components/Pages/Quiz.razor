@@ -5,422 +5,250 @@
 @inject ProgressService ProgressService
 @inject IJSRuntime JS
 @implements IAsyncDisposable
-@rendermode InteractiveServer
 
-<PageTitle>Spanish Quiz</PageTitle>
+<PageTitle>Práctica y Cuestionarios | Aprende Español</PageTitle>
 
-<div>
+<div style="max-width: 600px; margin: 0 auto;">
 
 @if (!_quizStarted)
 {
-    <div class="d-flex flex-column align-center">
-        <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600;">Start a Quiz</MudText>
-
-        <MudPaper Elevation="0" Class="pa-6 rounded-lg" Style="border: 1px solid #E2E8F0; width: 100%; max-width: 400px;">
-            <MudSelect T="int" Label="Number of questions" @bind-Value="_questionCount" Variant="Variant.Outlined" Class="mb-4">
-                <MudSelectItem Value="5">5 questions</MudSelectItem>
-                <MudSelectItem Value="10">10 questions</MudSelectItem>
-                <MudSelectItem Value="20">20 questions</MudSelectItem>
-                <MudSelectItem Value="50">50 questions</MudSelectItem>
-            </MudSelect>
-
-            <MudSelect T="string" Label="Quiz type" @bind-Value="_quizType" Variant="Variant.Outlined" Class="mb-6">
-                <MudSelectItem Value="@("SpanishToEnglish")">Spanish to English</MudSelectItem>
-                <MudSelectItem Value="@("EnglishToSpanish")">English to Spanish</MudSelectItem>
-                <MudSelectItem Value="@("Mixed")">Mixed</MudSelectItem>
-            </MudSelect>
-
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
-                       OnClick="StartQuiz" StartIcon="@Icons.Material.Rounded.PlayArrow">
-                Start Quiz
-            </MudButton>
-        </MudPaper>
+    <!-- Quiz Setup Screen -->
+    <div class="text-center mb-6">
+        <div class="d-inline-flex align-center px-3 py-1 mb-2" style="background: #FEF3E7; border: 1px solid #FCD34D; border-radius: 20px; gap: 8px;">
+            <MudIcon Icon="@Icons.Material.Rounded.Timer" Size="Size.Small" Style="color: #D97706;" />
+            <span style="font-size: 0.82rem; font-weight: 700; color: #B45309;">ENTRENAMIENTO INTERACTIVO</span>
+        </div>
+        <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917;">Cuestionario de Vocabulario</MudText>
+        <MudText Typo="Typo.body2" Style="color: #57534E;">
+            Selecciona tus preferencias para poner a prueba tu velocidad y retención.
+        </MudText>
     </div>
+
+    <MudPaper Elevation="0" Class="tierra-card pa-6 mb-6">
+        <MudSelect T="int" Label="Número de preguntas" @bind-Value="_questionCount" Variant="Variant.Outlined" Class="mb-4">
+            <MudSelectItem Value="5">5 preguntas (rápido)</MudSelectItem>
+            <MudSelectItem Value="10">10 preguntas (estándar)</MudSelectItem>
+            <MudSelectItem Value="20">20 preguntas (completo)</MudSelectItem>
+            <MudSelectItem Value="50">50 preguntas (maratón)</MudSelectItem>
+        </MudSelect>
+
+        <MudSelect T="string" Label="Tipo de prueba" @bind-Value="_quizType" Variant="Variant.Outlined" Class="mb-4">
+            <MudSelectItem Value="@("SpanishToEnglish")">Español ➔ Inglés</MudSelectItem>
+            <MudSelectItem Value="@("EnglishToSpanish")">Inglés ➔ Español</MudSelectItem>
+            <MudSelectItem Value="@("Mixed")">Mixto (ambas direcciones)</MudSelectItem>
+        </MudSelect>
+
+        <MudSelect T="int" Label="Rango de dificultad" @bind-Value="_frequencyScope" Variant="Variant.Outlined" Class="mb-6">
+            <MudSelectItem Value="100">Top 100 palabras (esencial)</MudSelectItem>
+            <MudSelectItem Value="500">Top 500 palabras (intermedio)</MudSelectItem>
+            <MudSelectItem Value="1000">Top 1,000 palabras (avanzado)</MudSelectItem>
+            <MudSelectItem Value="10000">Todo el vocabulario (10,000)</MudSelectItem>
+        </MudSelect>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
+                   OnClick="StartQuiz" StartIcon="@Icons.Material.Rounded.PlayArrow"
+                   Style="border-radius: 12px; height: 50px; font-weight: 700; text-transform: none;">
+            Comenzar Prueba
+        </MudButton>
+    </MudPaper>
 }
 else if (_quizComplete)
 {
-    <div class="d-flex flex-column align-center">
-        <MudPaper Elevation="0" Class="pa-8 rounded-lg text-center mb-6"
-                  Style="border: 1px solid #E2E8F0; width: 100%; max-width: 500px;">
-
+    <!-- Quiz Complete Celebration Screen -->
+    <MudPaper Elevation="0" Class="tierra-card pa-8 text-center mb-6">
+        <div style="@($"width: 72px; height: 72px; border-radius: 50%; background: {(_accuracy >= 70 ? "#FEF3E7" : "#FDEEEB")}; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;")">
             <MudIcon Icon="@(_accuracy >= 70 ? Icons.Material.Rounded.EmojiEvents : Icons.Material.Rounded.School)"
-                     Size="Size.Large" Color="@(_accuracy >= 70 ? Color.Warning : Color.Primary)" Class="mb-4" />
+                     Size="Size.Large" Style="@($"color: {(_accuracy >= 70 ? "#D97706" : "#D9483B")}; font-size: 40px;")" />
+        </div>
 
-            <MudText Typo="Typo.h4" Class="mb-2">Quiz Complete!</MudText>
+        <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917;" Class="mb-1">
+            ¡Prueba Completada!
+        </MudText>
+        <MudText Typo="Typo.body2" Style="color: #78716C;" Class="mb-4">
+            @GetAccuracyMessage()
+        </MudText>
 
-            <MudText Typo="Typo.h2" Color="@GetAccuracyColor()" Class="my-4" Style="font-weight: 700;">
-                @_correctAnswers / @_questions.Count
-            </MudText>
-
-            <MudText Typo="Typo.h6" Color="@GetAccuracyColor()" Class="mb-2">
-                @GetAccuracyMessage()
-            </MudText>
-
-            <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-6">
-                Accuracy: @_accuracy.ToString("F0")%
-            </MudText>
-
-            <div class="d-flex gap-3 justify-center">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartQuiz">
-                    Try Again
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="ResetQuiz">
-                    New Settings
-                </MudButton>
+        <div class="pa-4 rounded-xl my-4" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
+            <div style="font-size: 3rem; font-weight: 800; color: @GetAccuracyColor(); line-height: 1;">
+                @_correctAnswers <span style="font-size: 1.5rem; color: #78716C; font-weight: 600;">/ @_questions.Count</span>
             </div>
-        </MudPaper>
+            <div style="font-size: 1rem; font-weight: 700; color: #57534E; margin-top: 6px;">
+                Precisión: @_accuracy.ToString("F0")%
+            </div>
+        </div>
 
-        <MudExpansionPanels Elevation="0" Style="width: 100%; max-width: 600px; border: 1px solid #E2E8F0;" Class="rounded-lg">
-            <MudExpansionPanel Text="Review Answers" Style="font-weight: 500;">
-                <MudSimpleTable Dense="true" Hover="true" Striped="true">
-                    <thead>
-                        <tr>
-                            <th>Question</th>
-                            <th>Your Answer</th>
-                            <th>Correct</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var result in _results)
-                        {
-                            <tr>
-                                <td>@result.Question</td>
-                                <td>@result.UserAnswer</td>
-                                <td>@result.CorrectAnswer</td>
-                                <td>
-                                    <MudIcon Icon="@(result.IsCorrect ? Icons.Material.Rounded.Check : Icons.Material.Rounded.Close)"
-                                             Color="@(result.IsCorrect ? Color.Success : Color.Error)" Size="Size.Small" />
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </MudSimpleTable>
-            </MudExpansionPanel>
-        </MudExpansionPanels>
-    </div>
+        @if (_missedWords.Count > 0)
+        {
+            <div class="mt-6 text-left">
+                <div class="d-flex align-center gap-1 mb-3" style="font-size: 0.85rem; font-weight: 700; color: #D9483B;">
+                    <MudIcon Icon="@Icons.Material.Rounded.Replay" Size="Size.Small" /> Palabras para repasar (@_missedWords.Count)
+                </div>
+                <div class="d-flex flex-column gap-2 mb-6">
+                    @foreach (var word in _missedWords)
+                    {
+                        <div class="d-flex justify-space-between align-center pa-3 rounded-lg" style="background: #FFFFFF; border: 1px solid #EBE6DE;">
+                            <div>
+                                <span style="font-weight: 700; color: #1C1917; font-size: 1.05rem;">@word.Spanish</span>
+                                <span style="font-size: 0.85rem; color: #78716C; margin-left: 8px;">@word.English</span>
+                            </div>
+                            <button class="audio-btn" style="width: 32px; height: 32px;" @onclick="@(() => PlaySpanishAudio(word.Spanish))">
+                                <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="d-flex gap-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
+                       OnClick="RestartQuiz" StartIcon="@Icons.Material.Rounded.Refresh"
+                       Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none;">
+                Repetir Prueba
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Size="Size.Large"
+                       OnClick="ExitQuiz" StartIcon="@Icons.Material.Rounded.Home"
+                       Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none; border-color: #EBE6DE;">
+                Volver al Inicio
+            </MudButton>
+        </div>
+    </MudPaper>
 }
-else
+else if (_currentQuestion != null)
 {
-    <div class="d-flex flex-column align-center">
-        <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">
-            Question @(_currentQuestionIndex + 1) of @_questions.Count
-        </MudText>
+    <!-- Active Quiz Question Screen -->
+    <div class="d-flex justify-space-between align-center mb-3 px-1">
+        <span style="font-size: 0.85rem; font-weight: 700; color: #78716C;">
+            Pregunta @(_currentQuestionIndex + 1) de @_questions.Count
+        </span>
+        @if (_currentStreak > 1)
+        {
+            <div class="d-flex align-center gap-1 px-2 py-0.5 rounded-pill" style="background: #FEF3E7; border: 1px solid #FCD34D;">
+                <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706;" />
+                <span style="font-size: 0.78rem; font-weight: 700; color: #B45309;">@_currentStreak en racha</span>
+            </div>
+        }
+    </div>
 
-        <MudProgressLinear Color="Color.Primary" Rounded="true" Value="@((_currentQuestionIndex + 1) * 100.0 / _questions.Count)"
-                           Class="mb-6" Style="width: 100%; max-width: 500px;" />
+    <MudProgressLinear Color="Color.Primary" Rounded="true"
+                       Value="@((_currentQuestionIndex + 1) * 100.0 / _questions.Count)"
+                       Class="mb-5" Style="height: 8px; background-color: #EBE6DE;" />
 
-        <MudPaper Elevation="0" Class="pa-6 rounded-lg" Style="border: 1px solid #E2E8F0; width: 100%; max-width: 500px;">
+    <MudPaper Elevation="0" Class="tierra-card pa-6 mb-6">
+        <!-- Question Header Prompt -->
+        <div class="text-center mb-6">
+            <span style="font-size: 0.85rem; font-weight: 600; color: #78716C; display: block; margin-bottom: 6px;">
+                @(_currentQuestion.IsSpanishToEnglish ? "¿Cuál es el significado en inglés de:" : "¿Cómo se dice en español:")
+            </span>
 
-            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-6">
-                @if (_currentQuestion!.IsSpanishToEnglish)
+            <div class="d-flex align-center justify-center gap-2">
+                <span style="font-size: 2.25rem; font-weight: 800; color: #1C1917; letter-spacing: -0.01em;">
+                    @(_currentQuestion.IsSpanishToEnglish ? _currentQuestion.Word.Spanish : _currentQuestion.Word.English)
+                </span>
+                @if (_currentQuestion.IsSpanishToEnglish)
                 {
-                    <span>What does "<strong style="color: #4F46E5;">@_currentQuestion.Word.Spanish</strong>" mean?</span>
-                }
-                else
-                {
-                    <span>How do you say "<strong style="color: #4F46E5;">@_currentQuestion.Word.English</strong>" in Spanish?</span>
-                }
-            </MudText>
-
-            <div class="d-flex flex-column gap-3">
-                @for (int i = 0; i < _currentQuestion.Options.Count; i++)
-                {
-                    var option = _currentQuestion.Options[i];
-                    var optionNumber = i + 1;
-                    var optionText = _currentQuestion.IsSpanishToEnglish ? option.English : option.Spanish;
-                    <MudButton Variant="@GetOptionVariant(option)"
-                               Color="@GetOptionColor(option)"
-                               FullWidth="true"
-                               Size="Size.Large"
-                               OnClick="@(() => SelectAnswer(option))"
-                               Disabled="@_answerSelected"
-                               Class="justify-start text-left">
-                        <span class="d-flex align-center gap-3" style="width: 100%;">
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default"
-                                     Style="min-width: 28px;" Class="px-2">@optionNumber</MudChip>
-                            <span>@optionText</span>
-                        </span>
-                    </MudButton>
+                    <button class="audio-btn" style="width: 38px; height: 38px;" @onclick="@(() => PlaySpanishAudio(_currentQuestion.Word.Spanish))" title="Escuchar">
+                        <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                    </button>
                 }
             </div>
 
-            @if (_answerSelected)
+            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined" Class="mt-2" Style="font-weight: 600;">
+                @_currentQuestion.Word.PartOfSpeech
+            </MudChip>
+        </div>
+
+        <!-- Multiple Choice Options -->
+        <div class="d-flex flex-column gap-3 mb-6">
+            @for (int i = 0; i < _currentQuestion.Options.Count; i++)
             {
-                <MudAlert Severity="@(_lastAnswerCorrect ? Severity.Success : Severity.Error)" Class="mt-4" Dense="true">
-                    @if (_lastAnswerCorrect)
-                    {
-                        <div>
-                            <strong>Correct!</strong>
-                            <div class="mt-2">
-                                <span style="color: #4F46E5; font-weight: 600;">@_currentQuestion.Word.Spanish</span>
-                                <span> = </span>
-                                <span>@_currentQuestion.Word.English</span>
-                                <span class="ml-2" style="opacity: 0.7;">(@_currentQuestion.Word.PartOfSpeech)</span>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div>
-                            <strong>Incorrect</strong>
-                            <div class="mt-2">
-                                <span style="color: #4F46E5; font-weight: 600;">@_currentQuestion.Word.Spanish</span>
-                                <span> = </span>
-                                <span>@_currentQuestion.Word.English</span>
-                                <span class="ml-2" style="opacity: 0.7;">(@_currentQuestion.Word.PartOfSpeech)</span>
-                            </div>
-                        </div>
-                    }
-                </MudAlert>
+                var option = _currentQuestion.Options[i];
+                var optionNum = i + 1;
+                var optionText = _currentQuestion.IsSpanishToEnglish ? option.English : option.Spanish;
+                var isSelected = _selectedAnswer == option;
+                var isCorrect = option.Id == _currentQuestion.Word.Id;
 
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-4"
-                           OnClick="NextQuestion"
-                           EndIcon="@Icons.Material.Rounded.ArrowForward">
-                    @(_currentQuestionIndex < _questions.Count - 1 ? "Next Question" : "See Results")
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Inherit" Class="ml-2">Enter</MudChip>
-                </MudButton>
+                <button class="quiz-option-btn pa-4 text-left w-100 d-flex align-center justify-space-between"
+                        style="@GetOptionStyle(option, isSelected, isCorrect)"
+                        disabled="@_answerSelected"
+                        @onclick="@(() => SelectAnswer(option))">
+                    <div class="d-flex align-center gap-3">
+                        <span class="kbd-pill" style="min-width: 24px; text-align: center;">@optionNum</span>
+                        <span style="font-weight: 600; font-size: 1rem;">@optionText</span>
+                    </div>
+
+                    @if (_answerSelected)
+                    {
+                        @if (isCorrect)
+                        {
+                            <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        }
+                        else if (isSelected)
+                        {
+                            <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" />
+                        }
+                    }
+                </button>
             }
-        </MudPaper>
+        </div>
 
-        <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center" Class="mt-4">
-            Press <strong>1-4</strong> to select, <strong>Enter</strong> or <strong>Space</strong> to continue
-        </MudText>
+        <!-- Next / Advance Button -->
+        @if (_answerSelected)
+        {
+            <div class="d-flex flex-column gap-2 animate-fadeIn">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
+                           OnClick="NextQuestion" EndIcon="@Icons.Material.Rounded.ArrowForward"
+                           Style="border-radius: 12px; height: 50px; font-weight: 700; text-transform: none;">
+                    @(_currentQuestionIndex < _questions.Count - 1 ? "Siguiente Pregunta (Enter)" : "Ver Resultados")
+                </MudButton>
+            </div>
+        }
+    </MudPaper>
+
+    <!-- Keyboard Shortcuts Hint -->
+    <div class="d-flex justify-center gap-3 text-center" style="font-size: 0.78rem; color: #78716C;">
+        <span><span class="kbd-pill">1-4</span> Seleccionar</span>
+        <span><span class="kbd-pill">Enter</span> Continuar</span>
     </div>
 }
+
 </div>
 
 @code {
-    private DotNetObjectReference<Quiz>? _dotNetRef;
-    private bool _quizStarted;
-    private bool _quizComplete;
     private int _questionCount = 10;
     private string _quizType = "SpanishToEnglish";
+    private int _frequencyScope = 500;
+
+    private bool _quizStarted = false;
+    private bool _quizComplete = false;
+    private bool _answerSelected = false;
 
     private List<QuizQuestion> _questions = new();
+    private int _currentQuestionIndex = 0;
     private QuizQuestion? _currentQuestion;
-    private int _currentQuestionIndex;
-    private bool _answerSelected;
     private SpanishWord? _selectedAnswer;
-    private bool _lastAnswerCorrect;
-    private int _correctAnswers;
-    private double _accuracy;
-    private List<QuizResult> _results = new();
 
-    private class QuizQuestion
+    private int _correctAnswers = 0;
+    private int _currentStreak = 0;
+    private double _accuracy = 0;
+    private List<SpanishWord> _missedWords = new();
+
+    private DotNetObjectReference<Quiz>? _dotNetRef;
+
+    protected override async Task OnInitializedAsync()
     {
-        public required SpanishWord Word { get; set; }
-        public required List<SpanishWord> Options { get; set; }
-        public bool IsSpanishToEnglish { get; set; }
+        _dotNetRef = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("quizKeyboardHandler.init", _dotNetRef);
     }
-
-    private class QuizResult
-    {
-        public required string Question { get; set; }
-        public required string UserAnswer { get; set; }
-        public required string CorrectAnswer { get; set; }
-        public bool IsCorrect { get; set; }
-    }
-
-    private async Task StartQuiz()
-    {
-        _quizStarted = true;
-        _quizComplete = false;
-        _currentQuestionIndex = 0;
-        _correctAnswers = 0;
-        _results.Clear();
-        _answerSelected = false;
-
-        var allWords = WordService.GetAllWords();
-        var progress = await ProgressService.GetProgressAsync();
-
-        // Categorize words based on progress
-        var newWords = new List<SpanishWord>();
-        var failedWords = new List<SpanishWord>();
-        var learnedWords = new List<SpanishWord>();
-
-        foreach (var word in allWords)
-        {
-            if (!progress.WordStats.TryGetValue(word.Id, out var wordProgress))
-            {
-                // Never seen - highest priority
-                newWords.Add(word);
-            }
-            else if (!wordProgress.IsLearned)
-            {
-                // Seen but not learned (failed or still learning) - can be repeated
-                failedWords.Add(word);
-            }
-            else
-            {
-                // Learned - lowest priority, avoid unless necessary
-                learnedWords.Add(word);
-            }
-        }
-
-        // Select words prioritizing: new words first, then failed words, then learned words only if needed
-        var selectedWords = new List<SpanishWord>();
-
-        // Shuffle each category
-        newWords = newWords.OrderBy(_ => Random.Shared.Next()).ToList();
-        failedWords = failedWords.OrderBy(_ => Random.Shared.Next()).ToList();
-        learnedWords = learnedWords.OrderBy(_ => Random.Shared.Next()).ToList();
-
-        // Take from new words first
-        var needed = _questionCount;
-        selectedWords.AddRange(newWords.Take(needed));
-        needed -= selectedWords.Count;
-
-        // Then from failed words
-        if (needed > 0)
-        {
-            selectedWords.AddRange(failedWords.Take(needed));
-            needed -= failedWords.Count;
-        }
-
-        // Only use learned words if we still need more
-        if (needed > 0)
-        {
-            selectedWords.AddRange(learnedWords.Take(needed));
-        }
-
-        // Shuffle the final selection so it's not predictable
-        selectedWords = selectedWords.OrderBy(_ => Random.Shared.Next()).ToList();
-
-        _questions = selectedWords.Select(word =>
-        {
-            var isSpanishToEnglish = _quizType switch
-            {
-                "SpanishToEnglish" => true,
-                "EnglishToSpanish" => false,
-                _ => Random.Shared.Next(2) == 0
-            };
-
-            var wrongOptions = allWords
-                .Where(w => w.Id != word.Id)
-                .OrderBy(_ => Random.Shared.Next())
-                .Take(3)
-                .ToList();
-
-            var options = wrongOptions.Append(word).OrderBy(_ => Random.Shared.Next()).ToList();
-
-            return new QuizQuestion
-            {
-                Word = word,
-                Options = options,
-                IsSpanishToEnglish = isSpanishToEnglish
-            };
-        }).ToList();
-
-        _currentQuestion = _questions[0];
-    }
-
-    private void ResetQuiz()
-    {
-        _quizStarted = false;
-        _quizComplete = false;
-    }
-
-    private async Task SelectAnswer(SpanishWord selected)
-    {
-        if (_answerSelected) return;
-
-        _answerSelected = true;
-        _selectedAnswer = selected;
-        _lastAnswerCorrect = selected.Id == _currentQuestion!.Word.Id;
-
-        if (_lastAnswerCorrect)
-            _correctAnswers++;
-
-        await ProgressService.RecordAnswerAsync(_currentQuestion.Word.Id, _lastAnswerCorrect);
-
-        _results.Add(new QuizResult
-        {
-            Question = _currentQuestion.IsSpanishToEnglish
-                ? _currentQuestion.Word.Spanish
-                : _currentQuestion.Word.English,
-            UserAnswer = _currentQuestion.IsSpanishToEnglish
-                ? selected.English
-                : selected.Spanish,
-            CorrectAnswer = _currentQuestion.IsSpanishToEnglish
-                ? _currentQuestion.Word.English
-                : _currentQuestion.Word.Spanish,
-            IsCorrect = _lastAnswerCorrect
-        });
-    }
-
-    private async Task NextQuestion()
-    {
-        if (_currentQuestionIndex < _questions.Count - 1)
-        {
-            _currentQuestionIndex++;
-            _currentQuestion = _questions[_currentQuestionIndex];
-            _answerSelected = false;
-            _selectedAnswer = null;
-        }
-        else
-        {
-            _quizComplete = true;
-            _accuracy = _questions.Count > 0 ? (double)_correctAnswers / _questions.Count * 100 : 0;
-
-            var session = new QuizSession
-            {
-                Date = DateTime.UtcNow,
-                TotalQuestions = _questions.Count,
-                CorrectAnswers = _correctAnswers,
-                WordIdsTested = _questions.Select(q => q.Word.Id).ToList()
-            };
-            await ProgressService.RecordQuizSessionAsync(session);
-        }
-    }
-
-    private Variant GetOptionVariant(SpanishWord option)
-    {
-        if (!_answerSelected)
-            return Variant.Outlined;
-        return Variant.Filled;
-    }
-
-    private Color GetOptionColor(SpanishWord option)
-    {
-        if (!_answerSelected)
-            return Color.Default;
-
-        if (option.Id == _currentQuestion!.Word.Id)
-            return Color.Success;
-
-        if (option.Id == _selectedAnswer?.Id)
-            return Color.Error;
-
-        return Color.Default;
-    }
-
-    private Color GetAccuracyColor() => _accuracy switch
-    {
-        >= 90 => Color.Success,
-        >= 70 => Color.Primary,
-        >= 50 => Color.Warning,
-        _ => Color.Error
-    };
-
-    private string GetAccuracyMessage() => _accuracy switch
-    {
-        >= 90 => "Excellent work!",
-        >= 70 => "Good job!",
-        >= 50 => "Keep practicing!",
-        _ => "Don't give up!"
-    };
 
     [JSInvokable]
-    public async Task HandleKeyDown(string key)
+    public void HandleKeyDown(string key)
     {
-        if (!_quizStarted || _quizComplete || _currentQuestion == null)
-            return;
+        if (!_quizStarted || _quizComplete) return;
 
-        // Handle answer selection with number keys
-        if (!_answerSelected)
+        if (!_answerSelected && _currentQuestion != null)
         {
-            var optionIndex = key switch
+            int index = key switch
             {
                 "1" => 0,
                 "2" => 1,
@@ -429,28 +257,170 @@ else
                 _ => -1
             };
 
-            if (optionIndex >= 0 && optionIndex < _currentQuestion.Options.Count)
+            if (index >= 0 && index < _currentQuestion.Options.Count)
             {
-                await SelectAnswer(_currentQuestion.Options[optionIndex]);
+                SelectAnswer(_currentQuestion.Options[index]);
                 StateHasChanged();
             }
         }
-        // Handle next question with Enter or Space
-        else if (key == "Enter" || key == " ")
+        else if (_answerSelected && (key == "Enter" || key == " "))
         {
-            await NextQuestion();
+            NextQuestion();
             StateHasChanged();
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void StartQuiz()
     {
-        if (firstRender)
+        var pool = WordService.GetWordsByFrequency(_frequencyScope);
+        if (pool.Count < 4)
         {
-            _dotNetRef = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("quizKeyboardHandler.init", _dotNetRef);
+            pool = WordService.GetAllWords();
+        }
+
+        var selectedWords = pool.OrderBy(_ => Random.Shared.Next()).Take(_questionCount).ToList();
+        _questions = new List<QuizQuestion>();
+
+        foreach (var word in selectedWords)
+        {
+            var isSpanishToEnglish = _quizType switch
+            {
+                "SpanishToEnglish" => true,
+                "EnglishToSpanish" => false,
+                _ => Random.Shared.Next(2) == 0
+            };
+
+            var wrongOptions = WordService.GetRandomWords(3, new List<int> { word.Id });
+            var options = new List<SpanishWord> { word };
+            options.AddRange(wrongOptions);
+            options = options.OrderBy(_ => Random.Shared.Next()).ToList();
+
+            _questions.Add(new QuizQuestion
+            {
+                Word = word,
+                Options = options,
+                IsSpanishToEnglish = isSpanishToEnglish
+            });
+        }
+
+        _currentQuestionIndex = 0;
+        _correctAnswers = 0;
+        _currentStreak = 0;
+        _missedWords.Clear();
+        _quizStarted = true;
+        _quizComplete = false;
+        _answerSelected = false;
+        _currentQuestion = _questions.Count > 0 ? _questions[0] : null;
+
+        if (_currentQuestion != null && _currentQuestion.IsSpanishToEnglish)
+        {
+            _ = PlaySpanishAudio(_currentQuestion.Word.Spanish);
         }
     }
+
+    private async void SelectAnswer(SpanishWord option)
+    {
+        if (_answerSelected || _currentQuestion == null) return;
+
+        _answerSelected = true;
+        _selectedAnswer = option;
+        var correct = option.Id == _currentQuestion.Word.Id;
+
+        if (correct)
+        {
+            _correctAnswers++;
+            _currentStreak++;
+        }
+        else
+        {
+            _currentStreak = 0;
+            _missedWords.Add(_currentQuestion.Word);
+        }
+
+        await ProgressService.RecordAnswerAsync(_currentQuestion.Word.Id, correct);
+    }
+
+    private void NextQuestion()
+    {
+        if (_currentQuestionIndex < _questions.Count - 1)
+        {
+            _currentQuestionIndex++;
+            _currentQuestion = _questions[_currentQuestionIndex];
+            _selectedAnswer = null;
+            _answerSelected = false;
+
+            if (_currentQuestion.IsSpanishToEnglish)
+            {
+                _ = PlaySpanishAudio(_currentQuestion.Word.Spanish);
+            }
+        }
+        else
+        {
+            FinishQuiz();
+        }
+    }
+
+    private async void FinishQuiz()
+    {
+        _quizComplete = true;
+        _accuracy = _questions.Count > 0 ? (_correctAnswers * 100.0 / _questions.Count) : 0;
+
+        var session = new QuizSession
+        {
+            Date = DateTime.UtcNow,
+            TotalQuestions = _questions.Count,
+            CorrectAnswers = _correctAnswers,
+            WordIdsTested = _questions.Select(q => q.Word.Id).ToList()
+        };
+        await ProgressService.RecordQuizSessionAsync(session);
+        StateHasChanged();
+    }
+
+    private void RestartQuiz()
+    {
+        StartQuiz();
+    }
+
+    private void ExitQuiz()
+    {
+        _quizStarted = false;
+        _quizComplete = false;
+    }
+
+    private async Task PlaySpanishAudio(string text)
+    {
+        await JS.InvokeVoidAsync("spanishSpeech.speak", text);
+    }
+
+    private string GetOptionStyle(SpanishWord option, bool isSelected, bool isCorrect)
+    {
+        if (!_answerSelected) return "";
+
+        if (isCorrect)
+        {
+            return "border-color: #16A34A !important; background-color: #ECFDF5 !important; color: #15803D !important;";
+        }
+        if (isSelected && !isCorrect)
+        {
+            return "border-color: #DC2626 !important; background-color: #FEF2F2 !important; color: #B91C1C !important;";
+        }
+        return "opacity: 0.6;";
+    }
+
+    private string GetAccuracyColor() => _accuracy switch
+    {
+        >= 80 => "#16A34A",
+        >= 60 => "#E0872E",
+        _ => "#D9483B"
+    };
+
+    private string GetAccuracyMessage() => _accuracy switch
+    {
+        100 => "¡Extraordinario! Puntuación perfecta 🌟",
+        >= 80 => "¡Excelente trabajo! Dominas este vocabulario.",
+        >= 60 => "Buen intento. Sigue practicando para consolidar.",
+        _ => "¡Ánimo! La práctica constante hace al maestro."
+    };
 
     public async ValueTask DisposeAsync()
     {
@@ -459,5 +429,12 @@ else
             await JS.InvokeVoidAsync("quizKeyboardHandler.dispose");
             _dotNetRef.Dispose();
         }
+    }
+
+    private class QuizQuestion
+    {
+        public required SpanishWord Word { get; set; }
+        public required List<SpanishWord> Options { get; set; }
+        public bool IsSpanishToEnglish { get; set; }
     }
 }

@@ -3,125 +3,203 @@
 @using SpanishWordLearner.Services
 @inject WordService WordService
 @inject ProgressService ProgressService
-@rendermode InteractiveServer
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
-<PageTitle>Learn Spanish Words</PageTitle>
+<PageTitle>Aprender Palabras | Aprende Español</PageTitle>
 
 @if (_currentWord == null)
 {
-    <div class="d-flex justify-center py-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    <div class="d-flex justify-center py-12">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
     </div>
 }
 else
 {
-    <div class="d-flex flex-column align-center">
-        <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">
-            Word @(_currentIndex + 1) of @_words.Count
-        </MudText>
-
-        <MudProgressLinear Color="Color.Primary" Rounded="true" Value="@((_currentIndex + 1) * 100.0 / _words.Count)"
-                           Class="mb-6" Style="width: 100%; max-width: 400px;" />
-
-        <MudPaper Elevation="0" Class="pa-8 rounded-xl d-flex flex-column align-center"
-                  Style="border: 1px solid #E2E8F0; width: 100%; max-width: 500px; min-height: 300px;">
-
-            <MudChip T="string" Size="Size.Small" Color="Color.Default" Class="mb-4">
-                @_currentWord.PartOfSpeech
-            </MudChip>
-
-            @if (!_showTranslation)
-            {
-                <MudText Typo="Typo.h2" Class="mb-6" Style="font-weight: 600; color: #4F46E5;">
-                    @_currentWord.Spanish
-                </MudText>
-
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                           OnClick="ShowTranslation" Class="px-8">
-                    Show Translation
+    <div class="d-flex flex-column align-center" style="max-width: 580px; margin: 0 auto;">
+        <!-- Top Controls & Progress -->
+        <div class="d-flex justify-space-between align-center w-100 mb-3 px-2">
+            <span style="font-size: 0.85rem; font-weight: 600; color: #78716C;">
+                Palabra @(_currentIndex + 1) de @_words.Count
+            </span>
+            <div class="d-flex align-center gap-2">
+                <MudButton Variant="Variant.Text" Color="Color.Default" Size="Size.Small" OnClick="PreviousWord"
+                           Disabled="@(_currentIndex == 0)" StartIcon="@Icons.Material.Rounded.ArrowBack" Style="text-transform: none;">
+                    Anterior
                 </MudButton>
-            }
-            else
-            {
-                <MudText Typo="Typo.h2" Class="mb-2" Style="font-weight: 600; color: #4F46E5;">
-                    @_currentWord.Spanish
-                </MudText>
-
-                <MudText Typo="Typo.h5" Color="Color.Secondary" Class="mb-4">
-                    @_currentWord.English
-                </MudText>
-
-                @if (!string.IsNullOrEmpty(_currentWord.ExampleSentence))
-                {
-                    <MudPaper Elevation="0" Class="pa-4 rounded-lg mb-4" Style="background: #F8FAFC; width: 100%;">
-                        <MudText Typo="Typo.body2" Style="font-style: italic;">
-                            "@_currentWord.ExampleSentence"
-                        </MudText>
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">
-                            @_currentWord.ExampleTranslation
-                        </MudText>
-                    </MudPaper>
-                }
-
-                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-3">
-                    Did you know this word?
-                </MudText>
-
-                <div class="d-flex gap-3">
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large"
-                               OnClick="@(() => RecordAndNext(true))" StartIcon="@Icons.Material.Rounded.Check">
-                        Yes
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large"
-                               OnClick="@(() => RecordAndNext(false))" StartIcon="@Icons.Material.Rounded.Close">
-                        No
-                    </MudButton>
-                </div>
-            }
-        </MudPaper>
-
-        <div class="d-flex gap-2 mt-4">
-            <MudIconButton Icon="@Icons.Material.Rounded.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
-                           OnClick="PreviousWord" Disabled="@(_currentIndex == 0)" />
-            <MudIconButton Icon="@Icons.Material.Rounded.ArrowForward" Variant="Variant.Outlined" Color="Color.Default"
-                           OnClick="NextWord" Disabled="@(_currentIndex >= _words.Count - 1)" />
+                <MudButton Variant="Variant.Text" Color="Color.Default" Size="Size.Small" OnClick="NextWord"
+                           Disabled="@(_currentIndex >= _words.Count - 1)" EndIcon="@Icons.Material.Rounded.ArrowForward" Style="text-transform: none;">
+                    Siguiente
+                </MudButton>
+            </div>
         </div>
 
-        <MudPaper Elevation="0" Class="pa-4 mt-6 rounded-lg" Style="border: 1px solid #E2E8F0;">
-            <div class="d-flex gap-6 justify-center">
-                <div class="text-center">
-                    <MudText Typo="Typo.h6" Color="Color.Primary">@_sessionReviewed</MudText>
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">Reviewed</MudText>
+        <MudProgressLinear Color="Color.Primary" Rounded="true" Value="@((_currentIndex + 1) * 100.0 / _words.Count)"
+                           Class="mb-6 w-100" Style="height: 8px; background-color: #EBE6DE;" />
+
+        <!-- Main Flashcard -->
+        <div class="flashcard-container w-100 mb-6">
+            <div class="flashcard-inner">
+                <!-- Card Header -->
+                <div class="d-flex justify-space-between align-center w-100">
+                    <span class="px-3 py-1 rounded-pill" style="background: #FAF8F5; border: 1px solid #EBE6DE; font-size: 0.78rem; font-weight: 700; color: #78716C;">
+                        Frecuencia #@_currentWord.FrequencyRank
+                    </span>
+
+                    <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Outlined" Style="font-weight: 600;">
+                        @_currentWord.PartOfSpeech
+                    </MudChip>
                 </div>
-                <div class="text-center">
-                    <MudText Typo="Typo.h6" Color="Color.Success">@_sessionCorrect</MudText>
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">Knew</MudText>
+
+                <!-- Word & Audio Center -->
+                <div class="d-flex flex-column align-center my-6 text-center w-100">
+                    <div class="d-flex align-center justify-center gap-3 mb-2">
+                        <span class="word-display">@_currentWord.Spanish</span>
+                        <button class="audio-btn" @onclick="PlayAudio" title="Escuchar pronunciación nativa">
+                            <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Medium" />
+                        </button>
+                    </div>
+
+                    @if (!_showTranslation)
+                    {
+                        <p style="color: #78716C; font-size: 0.95rem; margin-top: 16px;">
+                            Presiona <strong>Mostrar traducción</strong> o la tecla <span class="kbd-pill">Espacio</span>
+                        </p>
+                    }
+                    else
+                    {
+                        <!-- Revealed Translation -->
+                        <div class="translation-display">
+                            @_currentWord.English
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(_currentWord.ExampleSentence))
+                        {
+                            <div class="pa-4 rounded-lg mt-2 text-left w-100" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
+                                <div class="d-flex align-center gap-1 mb-1" style="font-size: 0.75rem; font-weight: 700; color: #E0872E; text-transform: uppercase;">
+                                    <MudIcon Icon="@Icons.Material.Rounded.FormatQuote" Size="Size.Small" /> Ejemplo de uso
+                                </div>
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #1C1917; font-style: italic;">
+                                    "@_currentWord.ExampleSentence"
+                                </div>
+                                <div style="font-size: 0.85rem; color: #78716C; margin-top: 2px;">
+                                    @_currentWord.ExampleTranslation
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
-                <div class="text-center">
-                    <MudText Typo="Typo.h6" Color="Color.Info">@(_sessionAccuracy)%</MudText>
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">Accuracy</MudText>
+
+                <!-- Card Actions -->
+                <div class="w-100">
+                    @if (!_showTranslation)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
+                                   OnClick="ShowTranslation" StartIcon="@Icons.Material.Rounded.Visibility"
+                                   Style="border-radius: 12px; font-weight: 700; height: 50px; text-transform: none;">
+                            Mostrar Traducción
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column align-center w-100 gap-2">
+                            <span style="font-size: 0.82rem; font-weight: 600; color: #78716C;">¿Conocías esta palabra?</span>
+                            <div class="d-flex gap-3 w-100">
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" FullWidth="true" Size="Size.Large"
+                                           OnClick="@(() => RecordFeedback(false))" StartIcon="@Icons.Material.Rounded.Close"
+                                           Style="border-radius: 12px; font-weight: 700; height: 48px; text-transform: none; border-color: #FECACA;">
+                                    Aún no
+                                </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large"
+                                           OnClick="@(() => RecordFeedback(true))" StartIcon="@Icons.Material.Rounded.Check"
+                                           Style="border-radius: 12px; font-weight: 700; height: 48px; text-transform: none; color: #FFFFFF;">
+                                    ¡La sé!
+                                </MudButton>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
-        </MudPaper>
+        </div>
+
+        <!-- Keyboard Shortcuts Hint Footer -->
+        <div class="d-flex align-center justify-center flex-wrap gap-3 py-2 text-center" style="font-size: 0.8rem; color: #78716C;">
+            <span><span class="kbd-pill">Espacio</span> Revelar</span>
+            <span><span class="kbd-pill">1</span> Repasar</span>
+            <span><span class="kbd-pill">2</span> Sabida</span>
+            <span><span class="kbd-pill">←</span> / <span class="kbd-pill">→</span> Navegar</span>
+        </div>
     </div>
 }
 
 @code {
     private List<SpanishWord> _words = new();
+    private int _currentIndex = 0;
     private SpanishWord? _currentWord;
-    private int _currentIndex;
-    private bool _showTranslation;
-    private int _sessionReviewed;
-    private int _sessionCorrect;
-    private int _sessionAccuracy => _sessionReviewed > 0 ? _sessionCorrect * 100 / _sessionReviewed : 0;
+    private bool _showTranslation = false;
 
-    protected override void OnInitialized()
+    private DotNetObjectReference<Learn>? _dotNetRef;
+
+    protected override async Task OnInitializedAsync()
     {
-        _words = WordService.GetWordsByFrequency(10000);
+        WordService.OnWordsLoaded += RefreshWords;
+        LoadWordList();
+        _dotNetRef = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("learnKeyboardHandler.init", _dotNetRef);
+    }
+
+    [JSInvokable]
+    public void HandleKeyDown(string key)
+    {
+        switch (key)
+        {
+            case " ":
+            case "Enter":
+                if (!_showTranslation)
+                {
+                    ShowTranslation();
+                    StateHasChanged();
+                }
+                break;
+            case "1":
+                if (_showTranslation)
+                {
+                    _ = RecordFeedback(false);
+                }
+                break;
+            case "2":
+                if (_showTranslation)
+                {
+                    _ = RecordFeedback(true);
+                }
+                break;
+            case "ArrowLeft":
+                PreviousWord();
+                StateHasChanged();
+                break;
+            case "ArrowRight":
+                NextWord();
+                StateHasChanged();
+                break;
+        }
+    }
+
+    private void LoadWordList()
+    {
+        _words = WordService.GetWordsByFrequency(200);
         if (_words.Count > 0)
         {
-            _currentWord = _words[0];
+            _currentWord = _words[_currentIndex];
         }
+    }
+
+    private void RefreshWords()
+    {
+        InvokeAsync(() =>
+        {
+            LoadWordList();
+            StateHasChanged();
+        });
     }
 
     private void ShowTranslation()
@@ -129,15 +207,22 @@ else
         _showTranslation = true;
     }
 
-    private async Task RecordAndNext(bool knew)
+    private async Task PlayAudio()
     {
         if (_currentWord != null)
         {
-            await ProgressService.RecordAnswerAsync(_currentWord.Id, knew);
-            _sessionReviewed++;
-            if (knew) _sessionCorrect++;
+            await JS.InvokeVoidAsync("spanishSpeech.speak", _currentWord.Spanish);
         }
-        NextWord();
+    }
+
+    private async Task RecordFeedback(bool known)
+    {
+        if (_currentWord != null)
+        {
+            await ProgressService.RecordAnswerAsync(_currentWord.Id, known);
+            NextWord();
+            StateHasChanged();
+        }
     }
 
     private void NextWord()
@@ -157,6 +242,16 @@ else
             _currentIndex--;
             _currentWord = _words[_currentIndex];
             _showTranslation = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        WordService.OnWordsLoaded -= RefreshWords;
+        if (_dotNetRef != null)
+        {
+            await JS.InvokeVoidAsync("learnKeyboardHandler.dispose");
+            _dotNetRef.Dispose();
         }
     }
 }
