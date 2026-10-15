@@ -6,11 +6,23 @@
     <script type="text/javascript">
         // Single Page Apps for GitHub Pages
         // MIT License: https://github.com/rafgraph/spa-github-pages
-        // Set pathSegmentsToKeep to 1 for project pages (e.g. username.github.io/repo-name), 0 for root / custom domains
-        var isGitHubPagesProject = window.location.hostname.endsWith('github.io') && !window.location.hostname.startsWith('localhost');
-        var pathSegmentsToKeep = isGitHubPagesProject ? 1 : 0;
-
+        //
+        // On GitHub Pages or custom domain static hosting (e.g. hojte.net/SpanishWordLearningApp/),
+        // check whether the URL starts with the repository/project subpath or an application route.
         var l = window.location;
+        var segments = l.pathname.split('/').filter(Boolean);
+        var knownRoutes = ['learn', 'quiz', 'statistics', 'error'];
+
+        var pathSegmentsToKeep = 0;
+        if (segments.length > 0) {
+            var firstSegment = segments[0].toLowerCase();
+            // If the first segment is explicitly SpanishWordLearningApp or is NOT an internal SPA page route,
+            // it represents the project repository subpath on the domain (keep 1 segment).
+            if (firstSegment === 'spanishwordlearningapp' || !knownRoutes.includes(firstSegment)) {
+                pathSegmentsToKeep = 1;
+            }
+        }
+
         l.replace(
             l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
             l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
