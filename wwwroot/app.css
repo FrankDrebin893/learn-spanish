@@ -308,7 +308,138 @@ html, body {
     display: inline-block;
 }
 
-/* Quiz Option Buttons */
+/* Quiz Option Buttons & Compass Grid */
+.quiz-compass-layout {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.quiz-compass-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        ".      top     ."
+        "left   center  right"
+        ".      bottom  .";
+    gap: 16px;
+    align-items: stretch;
+}
+
+.quiz-compass-center {
+    grid-area: center;
+    background: #FAF8F5;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 180px;
+    box-shadow: inset 0 1px 3px rgba(60, 40, 20, 0.03);
+}
+
+.quiz-compass-btn {
+    border-radius: var(--radius-md) !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    letter-spacing: 0 !important;
+    border: 1.5px solid var(--color-border) !important;
+    transition: all 0.18s ease !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text-primary) !important;
+    cursor: pointer;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    text-align: left;
+    width: 100%;
+}
+
+.quiz-compass-btn-top {
+    grid-area: top;
+}
+
+.quiz-compass-btn-bottom {
+    grid-area: bottom;
+}
+
+.quiz-compass-btn-left {
+    grid-area: left;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    padding: 20px 14px;
+}
+
+.quiz-compass-btn-right {
+    grid-area: right;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    padding: 20px 14px;
+}
+
+.quiz-compass-btn:hover:not([disabled]) {
+    border-color: var(--color-primary) !important;
+    background: var(--color-primary-light) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.quiz-compass-btn:focus-visible {
+    outline: 2px solid var(--color-primary) !important;
+    outline-offset: 2px;
+}
+
+/* Arrow Key Badge */
+.kbd-pill-arrow {
+    background: #F3EFEA;
+    border: 1px solid #DFD8CD;
+    color: var(--color-text-secondary);
+    font-size: 1.15rem;
+    font-weight: 800;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* Responsive adaptation for narrow mobile viewports */
+@media (max-width: 680px) {
+    .quiz-compass-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas:
+            "center center"
+            "top    top"
+            "left   right"
+            "bottom bottom";
+        gap: 12px;
+    }
+
+    .quiz-compass-btn-left,
+    .quiz-compass-btn-right {
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+}
+
 .quiz-option-btn {
     border-radius: var(--radius-md) !important;
     text-transform: none !important;

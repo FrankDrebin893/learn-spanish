@@ -96,7 +96,13 @@
             init: function(dotNetRef) {
                 this.dotNetRef = dotNetRef;
                 this.handler = (e) => {
-                    if (['1', '2', '3', '4', 'Enter', ' '].includes(e.key)) {
+                    const validKeys = [
+                        'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+                        '1', '2', '3', '4',
+                        'w', 'W', 'a', 'A', 's', 'S', 'd', 'D',
+                        'Enter', ' '
+                    ];
+                    if (validKeys.includes(e.key)) {
                         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
                             return;
                         }
