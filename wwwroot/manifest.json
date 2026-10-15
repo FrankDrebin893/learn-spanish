@@ -1,0 +1,26 @@
+{
+  "name": "Aprende Español",
+  "short_name": "Aprende",
+  "description": "Domina el vocabulario más frecuente del idioma español con tarjetas inteligentes y cuestionarios interactivos",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FAF8F5",
+  "theme_color": "#D9483B",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
