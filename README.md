@@ -1,117 +1,95 @@
-# Spanish Word Learner
+# Aprende Español - Spanish Word Learning App
 
-A modern Blazor web application for learning the most common Spanish words through flashcards and quizzes. Built with MudBlazor for a clean, focused learning experience.
+A modern, standalone Blazor WebAssembly application for mastering Spanish vocabulary through empirical frequency rankings, native speech audio, interactive flashcards, and quizzes.
 
-![Quiz Demo](quiz_demo.png)
+Designed with the **Tierra y Sol** design system using MudBlazor 8 and ready for static hosting on **GitHub Pages**.
 
-## Features
+---
 
-### Learn Mode
-- Flashcard-style learning with Spanish words shown first
-- Click to reveal English translations
-- Example sentences with translations for context
-- Track whether you knew each word
-- Progress through words ordered by frequency (most common first)
+## 🌟 Key Capabilities
 
-### Quiz Mode
-- Multiple choice quizzes with 4 options
-- Configurable quiz length (5, 10, 20, or 50 questions)
-- Three quiz types:
-  - Spanish to English
-  - English to Spanish
-  - Mixed (random direction)
-- **Keyboard navigation**: Press 1-4 to select answers, Enter/Space to continue
-- Immediate feedback with full word definition shown after each answer
-- Smart word selection: prioritizes new words, reviews failed words, avoids already-learned words
-- Review all answers at the end of each quiz
+### 1. Learn Mode (Flashcards)
+- Spaced study ordered by natural usage frequency (Top 100, Top 500, up to 10,000 words).
+- **Native Pronunciation Audio**: Hear correct Spanish pronunciation using browser speech synthesis (`window.speechSynthesis`).
+- Flip cards to reveal English definitions and example sentences.
+- Keyboard accelerated: `Space`/`Enter` to reveal, `1` for Still Learning, `2` for Got It, `←`/`→` to navigate.
 
-### Statistics
-- Track total words learned and words seen
-- View quiz history with scores and accuracy
-- Per-word performance tracking
-- Filter words by status: All, Learned, or Struggling
-- A word is considered "learned" after 3+ correct answers with 70%+ accuracy
-- Reset progress option
+### 2. Practice & Quiz Mode
+- Multiple-choice testing: Spanish-to-English, English-to-Spanish, or Mixed.
+- Configurable question counts: 5, 10, 20, or 50 questions.
+- Fast keyboard navigation: press `1`–`4` to answer, `Enter` to advance.
+- Live streak tracking, immediate audio pronunciation, and end-of-quiz scorecards with review of missed words.
 
-### Progress Persistence
-- Progress stored locally using LiteDB (lightweight embedded database)
-- Database location: `%APPDATA%\SpanishWordLearner\progress.db` (Windows)
-- Progress persists across sessions and browser changes
-- No account or login required
+### 3. Detailed Progress & Analytics
+- Complete mastery tracking: words are considered "Dominadas" (Learned) after 3+ correct reviews with 70%+ accuracy.
+- Granular performance filters: All, Dominadas (Learned), and Difíciles (Struggling).
+- Individual word performance table with direct audio playback.
 
-## Data Source
+### 4. Zero Backend & GitHub Pages Ready
+- **100% Client-Side**: Built with .NET 9 Blazor WebAssembly Standalone (`Microsoft.NET.Sdk.BlazorWebAssembly`).
+- **Browser Memory Persistence**: Stores all user progress, accuracy, and quiz history locally in `window.localStorage` (`spanish_word_learner_progress`).
+- **Instant Offline Access**: No account, login, or database server required.
+- **Automated Deployment**: GitHub Actions workflow included for instant publication to GitHub Pages.
 
-Word data is sourced from the [doozan/spanish_data](https://github.com/doozan/spanish_data) repository, which compiles:
+---
 
-- **Frequency data**: Most common Spanish lemmas from the [FrequencyWords](https://github.com/hermitdave/FrequencyWords) project (CC-BY-SA 3.0)
-- **Translations**: Spanish to English definitions from [Wiktionary](https://en.wiktionary.org) (CC-BY-SA)
+## 🎨 Visual Design System: *Tierra y Sol*
 
-The app loads up to 10,000 of the most frequent Spanish words with their translations.
+- Warm Iberian color palette: Seville Terracotta (`#D9483B`), Saffron Gold (`#E0872E`), Forest Olive (`#16A34A`), and Soft Parchment Canvas (`#FAF8F5`).
+- Modern typography powered by Google Fonts `Outfit`.
+- Tactile, accessible interactive components designed in adherence with the **Impeccable** design standard.
 
-If the data files are not present, the app falls back to an embedded list of 200 common words.
+---
 
-## Limitations
+## 🤖 Agent Agnostic Repository
 
-- **No audio pronunciation**: Words are text-only, no audio playback
-- **No spaced repetition**: Words are presented in frequency order, not using SRS algorithms
-- **Single user**: Progress is stored locally (not synced across devices)
-- **Limited context**: Example sentences are only available for the fallback word set
-- **English only**: Translations are Spanish to English only
-- **Offline data**: Word list is static and loaded at startup (not updated dynamically)
+This codebase is agent-agnostic. AI coding assistants (Google Antigravity, Claude Code, Cursor, GitHub Copilot, Codex, etc.) follow the standardized instructions in [AGENTS.md](AGENTS.md).
 
-## Requirements
+- **Unified Guidelines**: [AGENTS.md](AGENTS.md)
+- **Design Specifications**: [DESIGN.md](DESIGN.md)
+- **Product Context**: [PRODUCT.md](PRODUCT.md)
+- **Skills**: [.agents/skills/impeccable/](.agents/skills/impeccable/SKILL.md)
 
-- .NET 9.0 SDK or later
+---
 
-## Running the App
+## 🚀 Running Locally
 
 ```bash
 # Clone the repository with submodules
 git clone --recurse-submodules <repository-url>
 cd SpanishWordLearningApp
 
-# Or if already cloned without submodules:
-git submodule update --init --recursive
-
-# Update spanish_data to latest:
-git submodule update --remote spanish_data
-
-# Run the application
-dotnet run
+# Run the development server with hot-reload
+dotnet run --project SpanishWordLearner.csproj
 ```
 
-Then open http://localhost:5062 in your browser.
+Open `http://localhost:5062` in your browser.
 
-## Project Structure
+---
 
-```
-SpanishWordLearningApp/
-├── Components/
-│   ├── Layout/
-│   │   ├── MainLayout.razor
-│   │   └── NavMenu.razor
-│   └── Pages/
-│       ├── Home.razor          # Dashboard with progress overview
-│       ├── Learn.razor         # Flashcard learning mode
-│       ├── Quiz.razor          # Multiple choice quizzes
-│       └── Statistics.razor    # Detailed progress statistics
-├── Models/
-│   ├── SpanishWord.cs          # Word data model
-│   └── UserProgress.cs         # Progress tracking models
-├── Services/
-│   ├── DataLoader.cs           # Parses spanish_data files
-│   ├── ProgressService.cs      # Manages user progress (LiteDB)
-│   └── WordService.cs          # Provides word data to components
-├── spanish_data/               # Git submodule from doozan/spanish_data
-│   ├── frequency.csv           # Word frequency rankings
-│   └── es-en.data              # Wiktionary translations
-└── Program.cs                  # App configuration and DI setup
+## 🧪 Automated Testing
+
+```bash
+dotnet test Tests/SpanishWordLearner.Tests.csproj
 ```
 
-## License
+---
 
-This application code is provided as-is for educational purposes.
+## 📦 Publishing to GitHub Pages
 
-Data from spanish_data repository is used under the following licenses:
-- frequency.csv: CC-BY-SA 3.0 (FrequencyWords)
-- es-en.data: CC-BY-SA (Wiktionary)
+### Automatic (Recommended)
+Push to the `main` branch. The included GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys the static WebAssembly bundle automatically.
+
+### Manual Build
+```bash
+dotnet publish SpanishWordLearner.csproj -c Release -o publish
+```
+The contents of `publish/wwwroot/` can be hosted on GitHub Pages, Cloudflare Pages, Netlify, or Vercel.
+
+---
+
+## 📚 Data Attribution
+
+Word frequency rankings and Wiktionary definitions are sourced from the [doozan/spanish_data](https://github.com/doozan/spanish_data) repository:
+- **Frequency Data**: Lemmatized frequency lists from [FrequencyWords](https://github.com/hermitdave/FrequencyWords) (CC-BY-SA 3.0).
+- **Translations**: Wiktionary Spanish-to-English entries (CC-BY-SA).

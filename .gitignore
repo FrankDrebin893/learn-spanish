@@ -20,9 +20,11 @@ publish/
 *.nupkg
 packages/
 
-# Local settings
+# Local settings & agents
 appsettings.Development.json
 *.local.json
+.gemini/
+.claude/*.local.json
 
 # OS files
 .DS_Store
