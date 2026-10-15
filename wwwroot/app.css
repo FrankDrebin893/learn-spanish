@@ -309,86 +309,51 @@ html, body {
 }
 
 /* ==========================================================================
-   Quiz Carousel Viewport & Sliding Dual-Slide Animation
+   Quiz Card Fade Transitions
    ========================================================================== */
-.quiz-carousel-viewport {
-    --slide-peek: 36px;
-    --slide-margin: 52px;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    padding: 6px 4px 14px 4px;
-}
-
-@media (max-width: 680px) {
-    .quiz-carousel-viewport {
-        --slide-peek: 22px;
-        --slide-margin: 32px;
+@keyframes quizFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.985);
     }
 }
 
-.quiz-carousel-track {
-    position: relative;
+@keyframes quizFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(8px) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.quiz-card-stage {
     width: 100%;
-    display: flex;
-    align-items: stretch;
-    transform: translateX(0);
-    will-change: transform;
+    will-change: opacity, transform;
 }
 
-.quiz-carousel-track.is-sliding {
-    transform: translateX(calc(-100% + var(--slide-peek)));
-    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+.quiz-card-stage.fade-out {
+    animation: quizFadeOut 0.12s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
-.quiz-carousel-slide-active {
-    width: calc(100% - var(--slide-margin));
-    flex: 0 0 calc(100% - var(--slide-margin));
-    position: relative;
-    z-index: 2;
-    transition: filter 0.22s ease, opacity 0.22s ease, transform 0.22s ease;
-}
-
-.quiz-carousel-track.is-sliding .quiz-carousel-slide-active {
-    opacity: 0.22;
-    filter: blur(5px);
-    transform: scale(0.97);
-}
-
-.quiz-carousel-slide-next {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc(100% - var(--slide-peek));
-    width: calc(100% - var(--slide-margin));
-    z-index: 1;
-    opacity: 0.35;
-    filter: blur(7px);
-    pointer-events: none;
-    user-select: none;
-    transform: scale(0.96);
-    transform-origin: left center;
-    transition: filter 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.quiz-carousel-track.is-sliding .quiz-carousel-slide-next {
-    opacity: 1;
-    filter: blur(0px);
-    transform: scale(1);
+.quiz-card-stage.fade-in {
+    animation: quizFadeIn 0.15s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .quiz-carousel-track.is-sliding {
-        transform: none !important;
-        transition: none !important;
+    .quiz-card-stage.fade-out {
+        animation: none !important;
+        opacity: 0;
     }
-    .quiz-carousel-slide-active,
-    .quiz-carousel-slide-next {
-        transition: opacity 0.15s ease !important;
-        transform: none !important;
-        filter: none !important;
+    .quiz-card-stage.fade-in {
+        animation: none !important;
+        opacity: 1;
     }
 }
 
