@@ -193,8 +193,10 @@ else if (_currentQuestion != null)
                             style="@GetOptionStyle(optLeft, isSelected, isCorrect)"
                             disabled="@_answerSelected"
                             @onclick="@(() => SelectAnswer(optLeft))">
-                        <span class="kbd-pill-arrow">←</span>
-                        <span style="font-weight: 600; font-size: 1.05rem; line-height: 1.3;">@GetOptionText(optLeft)</span>
+                        <div class="d-flex align-center gap-3 flex-sm-column flex-row" style="min-width: 0;">
+                            <span class="kbd-pill-arrow">←</span>
+                            <span class="quiz-option-text" style="font-weight: 600; font-size: 1.02rem; line-height: 1.3;">@GetOptionText(optLeft)</span>
+                        </div>
                         @if (_answerSelected)
                         {
                             @if (isCorrect)
@@ -211,12 +213,12 @@ else if (_currentQuestion != null)
 
                 <!-- CENTER WORD STAGE (Palabra Central) -->
                 <div class="quiz-compass-center">
-                    <span style="font-size: 0.78rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">
                         @(_currentQuestion.IsSpanishToEnglish ? "¿Traducción al inglés?" : "¿Cómo se dice en español?")
                     </span>
 
                     <div class="d-flex align-center justify-center gap-2 flex-wrap my-1">
-                        <span style="font-size: 2.25rem; font-weight: 800; color: #1C1917; letter-spacing: -0.02em; line-height: 1.15;">
+                        <span style="font-size: clamp(1.6rem, 5.5vw, 2.25rem); font-weight: 800; color: #1C1917; letter-spacing: -0.02em; line-height: 1.15; word-break: break-word;">
                             @(_currentQuestion.IsSpanishToEnglish ? _currentQuestion.Word.Spanish : _currentQuestion.Word.English)
                         </span>
                         @if (_currentQuestion.IsSpanishToEnglish)
@@ -227,7 +229,7 @@ else if (_currentQuestion != null)
                         }
                     </div>
 
-                    <span style="font-size: 0.82rem; font-weight: 600; color: #E0872E; font-style: italic; display: block; margin-top: 4px;">
+                    <span style="font-size: 0.82rem; font-weight: 600; color: #E0872E; font-style: italic; display: block; margin-top: 2px;">
                         @_currentQuestion.Word.PartOfSpeech
                     </span>
 
@@ -263,8 +265,10 @@ else if (_currentQuestion != null)
                             style="@GetOptionStyle(optRight, isSelected, isCorrect)"
                             disabled="@_answerSelected"
                             @onclick="@(() => SelectAnswer(optRight))">
-                        <span class="kbd-pill-arrow">→</span>
-                        <span style="font-weight: 600; font-size: 1.05rem; line-height: 1.3;">@GetOptionText(optRight)</span>
+                        <div class="d-flex align-center gap-3 flex-sm-column flex-row" style="min-width: 0;">
+                            <span class="kbd-pill-arrow">→</span>
+                            <span class="quiz-option-text" style="font-weight: 600; font-size: 1.02rem; line-height: 1.3;">@GetOptionText(optRight)</span>
+                        </div>
                         @if (_answerSelected)
                         {
                             @if (isCorrect)
@@ -290,9 +294,9 @@ else if (_currentQuestion != null)
                             style="@GetOptionStyle(optBottom, isSelected, isCorrect)"
                             disabled="@_answerSelected"
                             @onclick="@(() => SelectAnswer(optBottom))">
-                        <div class="d-flex align-center gap-3">
+                        <div class="d-flex align-center gap-3" style="min-width: 0;">
                             <span class="kbd-pill-arrow">↓</span>
-                            <span style="font-weight: 600; font-size: 1.05rem;">@GetOptionText(optBottom)</span>
+                            <span class="quiz-option-text" style="font-weight: 600; font-size: 1.02rem;">@GetOptionText(optBottom)</span>
                         </div>
                         @if (_answerSelected)
                         {
@@ -312,13 +316,13 @@ else if (_currentQuestion != null)
     </div>
 
     <!-- Keyboard Shortcuts Hint Footer -->
-    <div class="d-flex align-center justify-center flex-wrap gap-4 text-center mt-3" style="font-size: 0.8rem; color: #78716C;">
-        <div class="d-flex align-center gap-1.5">
+    <div class="d-flex align-center justify-center flex-wrap gap-2 gap-sm-4 text-center mt-3" style="font-size: 0.8rem; color: #78716C;">
+        <div class="d-none d-sm-flex align-center gap-1.5">
             <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">↑</span>
             <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">←</span>
             <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">↓</span>
             <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">→</span>
-            <span class="ml-1 font-weight-bold">Flechas de dirección</span>
+            <span class="ml-1 font-weight-bold">Flechas</span>
         </div>
         <span class="d-flex align-center gap-1">
             <MudIcon Icon="@Icons.Material.Rounded.Bolt" Size="Size.Small" Style="color: #E0872E;" />

@@ -7,11 +7,11 @@
 
 <PageTitle>Estadísticas de Aprendizaje | Aprende Español</PageTitle>
 
-<div class="mb-6 pt-2">
-    <MudText Typo="Typo.h3" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em;" Class="mb-1">
+<div class="mb-5 pt-1">
+    <MudText Typo="Typo.h3" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em; font-size: clamp(1.65rem, 5vw, 2.5rem); line-height: 1.15;" Class="mb-1">
         Tus Estadísticas
     </MudText>
-    <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 1rem;">
+    <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 0.95rem;">
         Seguimiento detallado de retención, volumen de estudio y precisión por palabra.
     </MudText>
 </div>
@@ -25,27 +25,27 @@
 else
 {
     <!-- Primary Highlight Card: Mastery & Coverage Milestone -->
-    <div class="tierra-hero-card pa-6 pa-md-8 mb-6">
-        <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center mb-4 gap-2">
+    <div class="tierra-hero-card pa-5 pa-sm-8 mb-5">
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-3 mb-sm-4 gap-2">
             <div>
                 <span class="d-block" style="font-size: 0.78rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">
                     Vocabulario Dominado
                 </span>
                 <div class="d-flex align-baseline gap-2 mt-1">
-                    <span class="metric-value" style="font-size: 3rem; font-weight: 800; color: #D9483B; line-height: 1;">
+                    <span class="metric-value" style="font-size: clamp(2.2rem, 7vw, 3rem); font-weight: 800; color: #D9483B; line-height: 1;">
                         @_progress.TotalWordsLearned
                     </span>
-                    <span class="tabular-numbers" style="font-size: 1.15rem; font-weight: 600; color: #78716C;">
+                    <span class="tabular-numbers" style="font-size: 1.05rem; font-weight: 600; color: #78716C;">
                         / @WordService.TotalWordCount palabras
                     </span>
                 </div>
             </div>
 
-            <div class="d-flex flex-column align-sm-end">
-                <span class="tabular-numbers" style="font-size: 1.5rem; font-weight: 800; color: #1C1917;">
+            <div class="d-flex flex-column align-start align-sm-end">
+                <span class="tabular-numbers" style="font-size: clamp(1.25rem, 4vw, 1.5rem); font-weight: 800; color: #1C1917;">
                     @((_progress.TotalWordsLearned * 100.0 / Math.Max(1, WordService.TotalWordCount)).ToString("F1"))%
                 </span>
-                <span style="font-size: 0.8rem; font-weight: 600; color: #78716C;">
+                <span style="font-size: 0.78rem; font-weight: 600; color: #78716C;">
                     del diccionario total
                 </span>
             </div>
@@ -57,38 +57,38 @@ else
     </div>
 
     <!-- Supporting Metrics Overview -->
-    <MudPaper Elevation="0" Class="tierra-card pa-4 px-md-6 mb-6">
+    <MudPaper Elevation="0" Class="tierra-card pa-3 px-sm-6 mb-5">
         <MudGrid Spacing="2">
             <MudItem xs="4">
-                <div class="pa-2 text-center">
-                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Estudiadas</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #1C1917; line-height: 1.2;">@_progress.WordStats.Count</span>
-                    <span style="font-size: 0.75rem; color: #78716C;">palabras vistas</span>
+                <div class="pa-1 pa-sm-2 text-center">
+                    <span class="d-block" style="font-size: 0.68rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.03em;">Vistas</span>
+                    <span class="metric-value d-block" style="font-size: clamp(1.3rem, 4.5vw, 1.85rem); font-weight: 800; color: #1C1917; line-height: 1.2;">@_progress.WordStats.Count</span>
+                    <span style="font-size: 0.72rem; color: #78716C;">estudiadas</span>
                 </div>
             </MudItem>
             <MudItem xs="4">
-                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
-                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Cuestionarios</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #1C1917; line-height: 1.2;">@_progress.TotalQuizzesTaken</span>
-                    <span style="font-size: 0.75rem; color: #78716C;">completados</span>
+                <div class="pa-1 pa-sm-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                    <span class="d-block" style="font-size: 0.68rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.03em;">Pruebas</span>
+                    <span class="metric-value d-block" style="font-size: clamp(1.3rem, 4.5vw, 1.85rem); font-weight: 800; color: #1C1917; line-height: 1.2;">@_progress.TotalQuizzesTaken</span>
+                    <span style="font-size: 0.72rem; color: #78716C;">hechas</span>
                 </div>
             </MudItem>
             <MudItem xs="4">
-                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
-                    <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Precisión</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: @(_progress.OverallAccuracy >= 0.7 ? "#16A34A" : "#1C1917"); line-height: 1.2;">
+                <div class="pa-1 pa-sm-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                    <span class="d-block" style="font-size: 0.68rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.03em;">Precisión</span>
+                    <span class="metric-value d-block" style="font-size: clamp(1.3rem, 4.5vw, 1.85rem); font-weight: 800; color: @(_progress.OverallAccuracy >= 0.7 ? "#16A34A" : "#1C1917"); line-height: 1.2;">
                         @((_progress.OverallAccuracy * 100).ToString("F0"))%
                     </span>
-                    <span style="font-size: 0.75rem; color: #78716C;">aciertos globales</span>
+                    <span style="font-size: 0.72rem; color: #78716C;">aciertos</span>
                 </div>
             </MudItem>
         </MudGrid>
     </MudPaper>
 
     <!-- Progress Breakdown & History -->
-    <MudGrid Spacing="3" Class="mb-6">
+    <MudGrid Spacing="3" Class="mb-5">
         <MudItem xs="12" md="6">
-            <MudPaper Elevation="0" Class="tierra-card pa-6 h-100">
+            <MudPaper Elevation="0" Class="tierra-card pa-5 h-100">
                 <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 700; color: #1C1917;">Cobertura de Vocabulario</MudText>
 
                 <div class="mb-4">
@@ -114,7 +114,7 @@ else
         </MudItem>
 
         <MudItem xs="12" md="6">
-            <MudPaper Elevation="0" Class="tierra-card pa-6 h-100">
+            <MudPaper Elevation="0" Class="tierra-card pa-5 h-100">
                 <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 700; color: #1C1917;">Últimas Pruebas</MudText>
 
                 @if (_progress.QuizHistory.Count == 0)
@@ -130,37 +130,39 @@ else
                 }
                 else
                 {
-                    <MudSimpleTable Dense="true" Hover="true" Style="background: transparent;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid #EBE6DE;">
-                                <th style="font-weight: 700; color: #78716C; font-size: 0.8rem;">FECHA</th>
-                                <th style="font-weight: 700; color: #78716C; font-size: 0.8rem;">ACIERTOS</th>
-                                <th style="font-weight: 700; color: #78716C; font-size: 0.8rem; text-align: right;">PRECISIÓN</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var quiz in _progress.QuizHistory.OrderByDescending(q => q.Date).Take(5))
-                            {
-                                <tr style="border-bottom: 1px solid #F3EFEA;">
-                                    <td class="tabular-numbers" style="font-size: 0.85rem; color: #57534E;">@quiz.Date.ToLocalTime().ToString("dd MMM HH:mm")</td>
-                                    <td class="tabular-numbers" style="font-size: 0.85rem; font-weight: 600; color: #1C1917;">@quiz.CorrectAnswers / @quiz.TotalQuestions</td>
-                                    <td style="text-align: right;">
-                                        <span class="tabular-numbers px-2 py-0.5 rounded-pill" style="@($"background: {(quiz.Accuracy >= 0.7 ? "#ECFDF5" : "#FEF2F2")}; color: {(quiz.Accuracy >= 0.7 ? "#16A34A" : "#DC2626")}; font-weight: 700; font-size: 0.8rem;")">
-                                            @((quiz.Accuracy * 100).ToString("F0"))%
-                                        </span>
-                                    </td>
+                    <div class="responsive-table-scroll">
+                        <MudSimpleTable Dense="true" Hover="true" Style="background: transparent;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #EBE6DE;">
+                                    <th style="font-weight: 700; color: #78716C; font-size: 0.8rem;">FECHA</th>
+                                    <th style="font-weight: 700; color: #78716C; font-size: 0.8rem;">ACIERTOS</th>
+                                    <th style="font-weight: 700; color: #78716C; font-size: 0.8rem; text-align: right;">PRECISIÓN</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </MudSimpleTable>
+                            </thead>
+                            <tbody>
+                                @foreach (var quiz in _progress.QuizHistory.OrderByDescending(q => q.Date).Take(5))
+                                {
+                                    <tr style="border-bottom: 1px solid #F3EFEA;">
+                                        <td class="tabular-numbers" style="font-size: 0.85rem; color: #57534E;">@quiz.Date.ToLocalTime().ToString("dd MMM HH:mm")</td>
+                                        <td class="tabular-numbers" style="font-size: 0.85rem; font-weight: 600; color: #1C1917;">@quiz.CorrectAnswers / @quiz.TotalQuestions</td>
+                                        <td style="text-align: right;">
+                                            <span class="tabular-numbers px-2 py-0.5 rounded-pill" style="@($"background: {(quiz.Accuracy >= 0.7 ? "#ECFDF5" : "#FEF2F2")}; color: {(quiz.Accuracy >= 0.7 ? "#16A34A" : "#DC2626")}; font-weight: 700; font-size: 0.8rem;")">
+                                                @((quiz.Accuracy * 100).ToString("F0"))%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </MudSimpleTable>
+                    </div>
                 }
             </MudPaper>
         </MudItem>
     </MudGrid>
 
     <!-- Word Performance Table with Filter & Search -->
-    <MudPaper Elevation="0" Class="tierra-card pa-5 mb-6">
-        <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center gap-3 mb-4">
+    <MudPaper Elevation="0" Class="tierra-card pa-4 pa-sm-5 mb-5">
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3 mb-4">
             <div>
                 <MudText Typo="Typo.h6" Style="font-weight: 700;">Rendimiento por Palabra</MudText>
                 <MudText Typo="Typo.caption" Style="color: #78716C;">Historial individual de aciertos y errores</MudText>
@@ -185,64 +187,66 @@ else
         }
         else
         {
-            <MudSimpleTable Dense="true" Hover="true" Style="background: transparent;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #EBE6DE;">
-                        <th style="font-weight: 700; color: #1C1917;">Español</th>
-                        <th style="font-weight: 700; color: #1C1917;">Inglés</th>
-                        <th style="font-weight: 700; color: #1C1917;">Repasos</th>
-                        <th style="font-weight: 700; color: #1C1917;">Precisión</th>
-                        <th style="font-weight: 700; color: #1C1917; text-align: right;">Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in _filteredWords.Take(50))
-                    {
-                        <tr style="border-bottom: 1px solid #F3EFEA;">
-                            <td>
-                                <div class="d-flex align-center gap-2">
-                                    <strong style="color: #D9483B; font-size: 1rem;">@item.Word.Spanish</strong>
-                                    <button class="audio-btn" style="width: 26px; height: 26px;" @onclick="@(() => PlayAudio(item.Word.Spanish))" title="Escuchar">
-                                        <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
-                                    </button>
-                                </div>
-                            </td>
-                            <td style="color: #57534E; font-size: 0.9rem;">@item.Word.English</td>
-                            <td class="tabular-numbers" style="font-weight: 600; font-size: 0.85rem; color: #1C1917;">@item.Progress.TimesReviewed</td>
-                            <td style="min-width: 100px;">
-                                <div class="d-flex align-center gap-2">
-                                    <MudProgressLinear Color="@GetAccuracyProgressColor(item.Progress.Accuracy)"
-                                                       Rounded="true" Value="@(item.Progress.Accuracy * 100)"
-                                                       Style="height: 6px; flex-grow: 1; background-color: #EBE6DE;" />
-                                    <span class="tabular-numbers" style="font-size: 0.75rem; font-weight: 600; min-width: 32px; color: #57534E;">
-                                        @((item.Progress.Accuracy * 100).ToString("F0"))%
-                                    </span>
-                                </div>
-                            </td>
-                            <td style="text-align: right;">
-                                @if (item.Progress.IsLearned)
-                                {
-                                    <span class="px-2.5 py-1 rounded-pill" style="background: #ECFDF5; color: #15803D; font-weight: 700; font-size: 0.75rem;">
-                                        Dominada
-                                    </span>
-                                }
-                                else if (item.Progress.Accuracy < 0.5 && item.Progress.TimesReviewed >= 3)
-                                {
-                                    <span class="px-2.5 py-1 rounded-pill" style="background: #FEF2F2; color: #B91C1C; font-weight: 700; font-size: 0.75rem;">
-                                        Difícil
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="px-2.5 py-1 rounded-pill" style="background: #FAF8F5; border: 1px solid #EBE6DE; color: #78716C; font-weight: 600; font-size: 0.75rem;">
-                                        En progreso
-                                    </span>
-                                }
-                            </td>
+            <div class="responsive-table-scroll">
+                <MudSimpleTable Dense="true" Hover="true" Style="background: transparent; min-width: 520px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #EBE6DE;">
+                            <th style="font-weight: 700; color: #1C1917;">Español</th>
+                            <th style="font-weight: 700; color: #1C1917;">Inglés</th>
+                            <th style="font-weight: 700; color: #1C1917;">Repasos</th>
+                            <th style="font-weight: 700; color: #1C1917;">Precisión</th>
+                            <th style="font-weight: 700; color: #1C1917; text-align: right;">Estado</th>
                         </tr>
-                    }
-                </tbody>
-            </MudSimpleTable>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in _filteredWords.Take(50))
+                        {
+                            <tr style="border-bottom: 1px solid #F3EFEA;">
+                                <td>
+                                    <div class="d-flex align-center gap-2">
+                                        <strong style="color: #D9483B; font-size: 1rem;">@item.Word.Spanish</strong>
+                                        <button class="audio-btn" style="width: 26px; height: 26px;" @onclick="@(() => PlayAudio(item.Word.Spanish))" title="Escuchar">
+                                            <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                                        </button>
+                                    </div>
+                                </td>
+                                <td style="color: #57534E; font-size: 0.9rem;">@item.Word.English</td>
+                                <td class="tabular-numbers" style="font-weight: 600; font-size: 0.85rem; color: #1C1917;">@item.Progress.TimesReviewed</td>
+                                <td style="min-width: 100px;">
+                                    <div class="d-flex align-center gap-2">
+                                        <MudProgressLinear Color="@GetAccuracyProgressColor(item.Progress.Accuracy)"
+                                                           Rounded="true" Value="@(item.Progress.Accuracy * 100)"
+                                                           Style="height: 6px; flex-grow: 1; background-color: #EBE6DE;" />
+                                        <span class="tabular-numbers" style="font-size: 0.75rem; font-weight: 600; min-width: 32px; color: #57534E;">
+                                            @((item.Progress.Accuracy * 100).ToString("F0"))%
+                                        </span>
+                                    </div>
+                                </td>
+                                <td style="text-align: right;">
+                                    @if (item.Progress.IsLearned)
+                                    {
+                                        <span class="px-2.5 py-1 rounded-pill" style="background: #ECFDF5; color: #15803D; font-weight: 700; font-size: 0.75rem;">
+                                            Dominada
+                                        </span>
+                                    }
+                                    else if (item.Progress.Accuracy < 0.5 && item.Progress.TimesReviewed >= 3)
+                                    {
+                                        <span class="px-2.5 py-1 rounded-pill" style="background: #FEF2F2; color: #B91C1C; font-weight: 700; font-size: 0.75rem;">
+                                            Difícil
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2.5 py-1 rounded-pill" style="background: #FAF8F5; border: 1px solid #EBE6DE; color: #78716C; font-weight: 600; font-size: 0.75rem;">
+                                            En progreso
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </div>
         }
     </MudPaper>
 

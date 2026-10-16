@@ -6,7 +6,7 @@ Welcome! This repository is designed to be agent-agnostic. Whether you are worki
 
 ## 1. Project Overview
 
-**SpanishWordLearningApp** is a modern, standalone web application for mastering Spanish vocabulary. It uses vocabulary frequency rankings and Wiktionary definitions from the `doozan/spanish_data` dataset.
+**learn-spanish** (Aprende Español) is a modern, standalone web application for mastering Spanish vocabulary. It uses vocabulary frequency rankings and Wiktionary definitions from the `doozan/spanish_data` dataset.
 
 ### Key Capabilities
 - **Learn Mode**: Spaced repetition flashcards ordered by natural frequency, featuring native pronunciation audio and example sentences.
@@ -47,7 +47,7 @@ dotnet publish SpanishWordLearner.csproj -c Release -o publish
 ## 4. Repository Structure
 
 ```
-SpanishWordLearningApp/
+learn-spanish/
 ├── .agents/                 # Open standard agent configuration & skills
 │   └── skills/impeccable/  # Impeccable frontend design skill & launcher
 ├── .github/

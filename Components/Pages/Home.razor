@@ -8,11 +8,11 @@
 <PageTitle>Aprende Español | Inicio</PageTitle>
 
 <!-- Hero Header -->
-<div class="text-center mb-6 pt-2">
-    <MudText Typo="Typo.h3" Class="mb-2" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em;">
+<div class="text-center mb-5 pt-1">
+    <MudText Typo="Typo.h3" Class="mb-2" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em; font-size: clamp(1.65rem, 5vw, 2.5rem); line-height: 1.15;">
         Aprende Español por Frecuencia
     </MudText>
-    <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 1.05rem; max-width: 580px; margin: 0 auto; line-height: 1.5;">
+    <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 0.98rem; max-width: 580px; margin: 0 auto; line-height: 1.5;">
         Domina las <strong>@(WordService.TotalWordCount.ToString("N0"))</strong> palabras más frecuentes del idioma mediante tarjetas inteligentes, audio nativo y práctica interactiva.
     </MudText>
 </div>
@@ -26,8 +26,8 @@
 else
 {
     <!-- Primary Focus: Hero Study Card -->
-    <div class="tierra-hero-card pa-6 pa-md-8 mb-6">
-        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-4 gap-2">
+    <div class="tierra-hero-card pa-5 pa-sm-8 mb-5">
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-3 mb-sm-4 gap-2">
             <span class="d-inline-flex align-center gap-1 px-3 py-1 rounded-pill" style="background: #FDEEEB; color: #BF3A2E; font-size: 0.8rem; font-weight: 700;">
                 <MudIcon Icon="@Icons.Material.Rounded.Star" Size="Size.Small" /> Nivel @GetProficiencyLevel()
             </span>
@@ -36,34 +36,34 @@ else
             </span>
         </div>
 
-        <div class="mb-5">
-            <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.01em;" Class="mb-2">
+        <div class="mb-4 mb-sm-5">
+            <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.01em; font-size: clamp(1.3rem, 4vw, 1.75rem); line-height: 1.25;" Class="mb-2">
                 Continuar tu Sesión de Estudio
             </MudText>
-            <MudText Typo="Typo.body1" Style="color: #57534E; max-width: 540px; font-size: 0.98rem; line-height: 1.5;">
+            <MudText Typo="Typo.body1" Style="color: #57534E; max-width: 540px; font-size: 0.95rem; line-height: 1.5;">
                 Estudia tarjetas interactivas organizadas por frecuencia natural de uso con pronunciación nativa y refuerzo activo.
             </MudText>
         </div>
 
-        <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between gap-4 pt-1">
+        <div class="d-flex flex-column flex-sm-row align-stretch align-sm-center justify-space-between gap-3 pt-1">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="learn" Size="Size.Large"
                        StartIcon="@Icons.Material.Rounded.PlayArrow"
-                       Style="border-radius: 12px; font-weight: 700; font-size: 1rem; padding: 12px 28px; text-transform: none; box-shadow: 0 4px 14px rgba(217, 72, 59, 0.28);">
+                       Style="border-radius: 12px; font-weight: 700; font-size: 1rem; padding: 12px 24px; text-transform: none; box-shadow: 0 4px 14px rgba(217, 72, 59, 0.28);">
                 Comenzar Estudio Ahora
             </MudButton>
 
-            <div class="d-flex align-center gap-2" style="font-size: 0.85rem; color: #78716C;">
+            <div class="d-none d-sm-flex align-center gap-2" style="font-size: 0.85rem; color: #78716C;">
                 <MudIcon Icon="@Icons.Material.Rounded.Keyboard" Size="Size.Small" />
                 <span>Atajos con <span class="kbd-pill">Espacio</span> y números</span>
             </div>
         </div>
 
         <!-- Global Progress Milestone Bar -->
-        <div class="mt-6 pt-4" style="border-top: 1px solid #F3EFEA;">
+        <div class="mt-5 mt-sm-6 pt-3 pt-sm-4" style="border-top: 1px solid #F3EFEA;">
             <div class="d-flex justify-space-between mb-1" style="font-size: 0.82rem; font-weight: 600;">
                 <span style="color: #78716C;">Progreso hacia la maestría</span>
                 <span class="tabular-numbers" style="color: #D9483B; font-weight: 700;">
-                    @_wordsLearned de @WordService.TotalWordCount palabras (@_progressPercent.ToString("F1")%)
+                    @_wordsLearned de @WordService.TotalWordCount (@_progressPercent.ToString("F1")%)
                 </span>
             </div>
             <MudProgressLinear Color="Color.Primary" Rounded="true" Size="Size.Medium"
@@ -72,33 +72,33 @@ else
     </div>
 
     <!-- Metrics Row: Structured, Calm, Tabular -->
-    <MudPaper Elevation="0" Class="tierra-card pa-4 px-md-6 mb-6">
+    <MudPaper Elevation="0" Class="tierra-card pa-3 px-sm-6 mb-5">
         <MudGrid Spacing="2">
             <MudItem xs="6" sm="3">
                 <div class="pa-2 text-center">
                     <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Dominadas</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #D9483B; line-height: 1.2;">@_wordsLearned</span>
+                    <span class="metric-value d-block" style="font-size: clamp(1.4rem, 4.5vw, 1.85rem); font-weight: 800; color: #D9483B; line-height: 1.2;">@_wordsLearned</span>
                     <span style="font-size: 0.75rem; color: #78716C;">palabras sabidas</span>
                 </div>
             </MudItem>
             <MudItem xs="6" sm="3">
-                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                <div class="pa-2 text-center metric-divider-left">
                     <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Estudiadas</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #1C1917; line-height: 1.2;">@_wordsSeen</span>
+                    <span class="metric-value d-block" style="font-size: clamp(1.4rem, 4.5vw, 1.85rem); font-weight: 800; color: #1C1917; line-height: 1.2;">@_wordsSeen</span>
                     <span style="font-size: 0.75rem; color: #78716C;">vistas en total</span>
                 </div>
             </MudItem>
             <MudItem xs="6" sm="3">
-                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                <div class="pa-2 text-center metric-divider-sm-left metric-divider-mobile-top">
                     <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Cuestionarios</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: #1C1917; line-height: 1.2;">@_quizzesTaken</span>
+                    <span class="metric-value d-block" style="font-size: clamp(1.4rem, 4.5vw, 1.85rem); font-weight: 800; color: #1C1917; line-height: 1.2;">@_quizzesTaken</span>
                     <span style="font-size: 0.75rem; color: #78716C;">pruebas hechas</span>
                 </div>
             </MudItem>
             <MudItem xs="6" sm="3">
-                <div class="pa-2 text-center" style="border-left: 1px solid #F3EFEA;">
+                <div class="pa-2 text-center metric-divider-left metric-divider-mobile-top">
                     <span class="d-block" style="font-size: 0.72rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.04em;">Precisión</span>
-                    <span class="metric-value d-block" style="font-size: 1.85rem; font-weight: 800; color: @(_overallAccuracy >= 70 ? "#16A34A" : "#1C1917"); line-height: 1.2;">
+                    <span class="metric-value d-block" style="font-size: clamp(1.4rem, 4.5vw, 1.85rem); font-weight: 800; color: @(_overallAccuracy >= 70 ? "#16A34A" : "#1C1917"); line-height: 1.2;">
                         @_overallAccuracy.ToString("F0")%
                     </span>
                     <span style="font-size: 0.75rem; color: #78716C;">en pruebas</span>

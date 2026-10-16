@@ -466,52 +466,138 @@ html, body {
     line-height: 1;
 }
 
-/* Responsive adaptation for narrow mobile viewports */
-@media (max-width: 680px) {
+/* Responsive adaptation for mobile viewports: Clean vertical stacked choices */
+@media (max-width: 640px) {
     .quiz-compass-grid {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto auto;
-        grid-template-areas:
-            "center center"
-            "top    top"
-            "left   right"
-            "bottom bottom";
-        gap: 12px;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
     }
 
+    .quiz-compass-center {
+        order: -1;
+        min-height: auto !important;
+        padding: 18px 14px !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    .quiz-compass-btn {
+        width: 100% !important;
+        min-height: 54px !important;
+        padding: 12px 14px !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        text-align: left !important;
+        gap: 12px !important;
+    }
+
+    .quiz-compass-btn-top,
     .quiz-compass-btn-left,
-    .quiz-compass-btn-right {
-        flex-direction: row;
-        justify-content: flex-start;
-        text-align: left;
-        gap: 12px;
-        padding: 14px 16px;
+    .quiz-compass-btn-right,
+    .quiz-compass-btn-bottom {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        text-align: left !important;
+        gap: 12px !important;
+        padding: 12px 14px !important;
+    }
+
+    .quiz-option-text {
+        font-size: 0.95rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .flashcard-inner {
+        padding: 22px 18px !important;
+        min-height: 300px !important;
+        border-radius: 20px !important;
+    }
+
+    .word-display {
+        font-size: clamp(2rem, 7.5vw, 2.75rem) !important;
+    }
+
+    .translation-display {
+        font-size: clamp(1.2rem, 4.5vw, 1.5rem) !important;
     }
 }
 
-.quiz-option-btn {
-    border-radius: var(--radius-md) !important;
-    text-transform: none !important;
-    font-weight: 600 !important;
-    font-size: 1.05rem !important;
-    letter-spacing: 0 !important;
-    border: 1.5px solid var(--color-border) !important;
-    transition: all 0.15s ease !important;
-    background: var(--color-surface) !important;
-    color: var(--color-text-primary) !important;
-    cursor: pointer;
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFFFFF;
+    border-top: 1px solid var(--color-border);
+    height: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    width: 100%;
 }
 
-.quiz-option-btn:hover:not([disabled]) {
-    border-color: var(--color-primary) !important;
-    background: var(--color-primary-light) !important;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+.mobile-nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #78716C;
+    padding: 6px 2px;
+    gap: 3px;
+    transition: color 0.15s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.quiz-option-btn:focus-visible {
-    outline: 2px solid var(--color-primary) !important;
-    outline-offset: 2px;
+.mobile-nav-item span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.mobile-nav-item.active {
+    color: var(--color-primary);
+}
+
+.mobile-nav-item:active {
+    transform: scale(0.92);
+}
+
+/* Responsive Table Wrapper */
+.responsive-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile Grid Metric Dividers */
+.metric-divider-left {
+    border-left: 1px solid #F3EFEA;
+}
+
+@media (max-width: 599.98px) {
+    .metric-divider-mobile-top {
+        border-top: 1px solid #F3EFEA;
+    }
+    .metric-divider-sm-left {
+        border-top: 1px solid #F3EFEA;
+        border-left: none;
+    }
+}
+
+@media (min-width: 600px) {
+    .metric-divider-sm-left {
+        border-left: 1px solid #F3EFEA;
+    }
 }
 
 /* Section Header Rhythm */
