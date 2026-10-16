@@ -50,13 +50,31 @@
                     </span>
                 </a>
 
-                <MudTooltip Text="@(AuthService.IsAuthenticated ? AuthService.CurrentUserEmail : "Sincronización en la nube")">
-                    <MudIconButton Icon="@(AuthService.IsAuthenticated ? Icons.Material.Rounded.AccountCircle : Icons.Material.Rounded.CloudQueue)"
-                                   OnClick="OpenAuthDialog"
-                                   Size="Size.Medium"
-                                   Class="account-btn"
-                                   Style="@(AuthService.IsAuthenticated ? "color: #D9483B; background: #FDEEEB; border-radius: 50%;" : "color: #78716C; border-radius: 50%;")" />
-                </MudTooltip>
+                @if (AuthService.IsAuthenticated)
+                {
+                    <MudButton Variant="Variant.Text"
+                               OnClick="OpenAuthDialog"
+                               StartIcon="@Icons.Material.Rounded.AccountCircle"
+                               Size="Size.Small"
+                               Class="px-2.5 py-1 account-header-btn"
+                               Style="background: #FDEEEB; color: #D9483B; border-radius: 20px; text-transform: none; font-weight: 600; font-size: 0.82rem; border: 1px solid rgba(217, 72, 59, 0.2);">
+                        <span class="d-none d-sm-inline" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            @(AuthService.CurrentUserEmail?.Split('@')[0] ?? "Cuenta")
+                        </span>
+                        <span class="d-inline d-sm-none">Cuenta</span>
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled"
+                               OnClick="OpenAuthDialog"
+                               StartIcon="@Icons.Material.Rounded.Login"
+                               Size="Size.Small"
+                               Class="px-3 py-1 login-header-btn"
+                               Style="background-color: #D9483B; color: white; border-radius: 20px; text-transform: none; font-weight: 600; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(217, 72, 59, 0.25);">
+                        Iniciar sesión
+                    </MudButton>
+                }
             </div>
         </MudContainer>
     </MudAppBar>
@@ -83,10 +101,10 @@
             <span>Progreso</span>
         </a>
         <button type="button" class="mobile-nav-item" @onclick="OpenAuthDialog" style="background: none; border: none; font-family: inherit; cursor: pointer;">
-            <MudIcon Icon="@(AuthService.IsAuthenticated ? Icons.Material.Rounded.AccountCircle : Icons.Material.Rounded.CloudQueue)" 
+            <MudIcon Icon="@(AuthService.IsAuthenticated ? Icons.Material.Rounded.AccountCircle : Icons.Material.Rounded.Login)" 
                      Size="Size.Medium" 
                      Style="@(AuthService.IsAuthenticated ? "color: #D9483B;" : "")" />
-            <span>@(AuthService.IsAuthenticated ? "Cuenta" : "Nube")</span>
+            <span>@(AuthService.IsAuthenticated ? "Cuenta" : "Iniciar sesión")</span>
         </button>
     </nav>
 </MudLayout>
@@ -100,6 +118,7 @@
         ProgressService.ProgressUpdated += OnProgressUpdated;
         AuthService.AuthStateChanged += OnAuthStateChanged;
 
+        await AuthService.CheckUrlForSessionAsync(NavigationManager.Uri);
         await RefreshLearnedCountAsync();
     }
 

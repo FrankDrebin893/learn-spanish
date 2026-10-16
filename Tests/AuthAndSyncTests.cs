@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using SpanishWordLearner.Models;
 using SpanishWordLearner.Services;
+using Supabase;
 using Supabase.Gotrue;
 using Xunit;
 
@@ -38,6 +39,12 @@ public class AuthAndSyncTests
 
         var magicResult = await authService.SendMagicLinkAsync("test@example.com");
         Assert.False(magicResult.Success);
+
+        var options = new SupabaseOptions { AutoRefreshToken = false };
+        var client = new Supabase.Client("https://example.supabase.co", "key", options);
+        var res = await client.Auth.SignIn(Constants.Provider.Google);
+        Assert.NotNull(res);
+        Assert.NotNull(res.Uri);
     }
 
     [Fact]

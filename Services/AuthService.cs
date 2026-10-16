@@ -135,6 +135,48 @@ public class AuthService
         }
     }
 
+    public async Task<string?> GetGoogleOAuthUrlAsync(string? redirectTo = null)
+    {
+        if (!IsConfigured || _client == null)
+            return null;
+
+        try
+        {
+            var options = new SignInOptions();
+            if (!string.IsNullOrWhiteSpace(redirectTo))
+            {
+                options.RedirectTo = redirectTo;
+            }
+
+            var res = await _client.Auth.SignIn(Constants.Provider.Google, options);
+            return res?.Uri?.ToString();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error initiating Google OAuth sign-in");
+            return null;
+        }
+    }
+
+    public async Task CheckUrlForSessionAsync(string url)
+    {
+        if (!IsConfigured || _client == null || string.IsNullOrWhiteSpace(url))
+            return;
+
+        if (url.Contains("access_token=") || url.Contains("refresh_token="))
+        {
+            try
+            {
+                await _client.Auth.GetSessionFromUrl(new Uri(url));
+                AuthStateChanged?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error restoring session from OAuth redirect URL");
+            }
+        }
+    }
+
     public async Task SignOutAsync()
     {
         if (_client != null)
