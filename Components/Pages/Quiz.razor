@@ -154,7 +154,7 @@ else if (_currentQuestion != null)
         <!-- Question Card with Smooth Fade-Out / Fade-In Animation -->
         <div class="quiz-card-stage @GetTransitionClass()">
             <MudPaper Elevation="0" Class="tierra-card quiz-question-paper pa-3 pa-sm-4 pa-md-6 mb-2 mb-sm-4">
-                <div class="quiz-compass-grid">
+                <div class="quiz-compass-grid" @key="@_currentQuestionIndex">
                     <!-- TOP OPTION (↑ Arriba) -->
                     @if (_currentQuestion.Options.Count > 0)
                     {
@@ -162,9 +162,10 @@ else if (_currentQuestion != null)
                         var isSelected = _selectedAnswer == optTop;
                         var isCorrect = optTop.Id == _currentQuestion.Word.Id;
 
-                        <button class="quiz-compass-btn quiz-compass-btn-top"
+                        <button @key="@($"{_currentQuestionIndex}_{optTop.Id}")"
+                                class="quiz-compass-btn quiz-compass-btn-top"
                                 style="@GetOptionStyle(optTop, isSelected, isCorrect)"
-                                disabled="@_answerSelected"
+                                disabled="@(!_isAcceptingInput || _answerSelected)"
                                 @onclick="@(() => SelectAnswer(optTop))">
                             <div class="d-flex align-center gap-2 gap-sm-3" style="min-width: 0;">
                                 <span class="kbd-pill-arrow">↑</span>
@@ -191,9 +192,10 @@ else if (_currentQuestion != null)
                         var isSelected = _selectedAnswer == optLeft;
                         var isCorrect = optLeft.Id == _currentQuestion.Word.Id;
 
-                        <button class="quiz-compass-btn quiz-compass-btn-left"
+                        <button @key="@($"{_currentQuestionIndex}_{optLeft.Id}")"
+                                class="quiz-compass-btn quiz-compass-btn-left"
                                 style="@GetOptionStyle(optLeft, isSelected, isCorrect)"
-                                disabled="@_answerSelected"
+                                disabled="@(!_isAcceptingInput || _answerSelected)"
                                 @onclick="@(() => SelectAnswer(optLeft))">
                             <div class="d-flex align-center gap-2 gap-sm-3 flex-sm-column flex-row" style="min-width: 0;">
                                 <span class="kbd-pill-arrow">←</span>
@@ -263,9 +265,10 @@ else if (_currentQuestion != null)
                         var isSelected = _selectedAnswer == optRight;
                         var isCorrect = optRight.Id == _currentQuestion.Word.Id;
 
-                        <button class="quiz-compass-btn quiz-compass-btn-right"
+                        <button @key="@($"{_currentQuestionIndex}_{optRight.Id}")"
+                                class="quiz-compass-btn quiz-compass-btn-right"
                                 style="@GetOptionStyle(optRight, isSelected, isCorrect)"
-                                disabled="@_answerSelected"
+                                disabled="@(!_isAcceptingInput || _answerSelected)"
                                 @onclick="@(() => SelectAnswer(optRight))">
                             <div class="d-flex align-center gap-2 gap-sm-3 flex-sm-column flex-row" style="min-width: 0;">
                                 <span class="kbd-pill-arrow">→</span>
@@ -292,9 +295,10 @@ else if (_currentQuestion != null)
                         var isSelected = _selectedAnswer == optBottom;
                         var isCorrect = optBottom.Id == _currentQuestion.Word.Id;
 
-                        <button class="quiz-compass-btn quiz-compass-btn-bottom"
+                        <button @key="@($"{_currentQuestionIndex}_{optBottom.Id}")"
+                                class="quiz-compass-btn quiz-compass-btn-bottom"
                                 style="@GetOptionStyle(optBottom, isSelected, isCorrect)"
-                                disabled="@_answerSelected"
+                                disabled="@(!_isAcceptingInput || _answerSelected)"
                                 @onclick="@(() => SelectAnswer(optBottom))">
                             <div class="d-flex align-center gap-2 gap-sm-3" style="min-width: 0;">
                                 <span class="kbd-pill-arrow">↓</span>
@@ -346,6 +350,7 @@ else if (_currentQuestion != null)
     private bool _answerSelected = false;
     private string _transitionClass = "";
     private bool _isTransitioning = false;
+    private bool _isAcceptingInput = true;
 
     private List<QuizQuestion> _questions = new();
     private int _currentQuestionIndex = 0;
@@ -371,7 +376,7 @@ else if (_currentQuestion != null)
     [JSInvokable]
     public void HandleKeyDown(string key)
     {
-        if (!_quizStarted || _quizComplete || _isTransitioning) return;
+        if (!_quizStarted || _quizComplete || _isTransitioning || !_isAcceptingInput) return;
 
         if (!_answerSelected && _currentQuestion != null)
         {
@@ -438,6 +443,7 @@ else if (_currentQuestion != null)
         _answerSelected = false;
         _transitionClass = "";
         _isTransitioning = false;
+        _isAcceptingInput = true;
         _currentQuestion = _questions.Count > 0 ? _questions[0] : null;
 
         if (_currentQuestion != null && _currentQuestion.IsSpanishToEnglish)
@@ -448,8 +454,10 @@ else if (_currentQuestion != null)
 
     private async Task SelectAnswer(SpanishWord option)
     {
-        if (_answerSelected || _isTransitioning || _currentQuestion == null) return;
+        if (!_isAcceptingInput || _answerSelected || _isTransitioning || _currentQuestion == null) return;
 
+        // Immediately lock input so mobile taps or synthetic ghost clicks cannot register twice
+        _isAcceptingInput = false;
         _answerSelected = true;
         _selectedAnswer = option;
         var correct = option.Id == _currentQuestion.Word.Id;
@@ -471,15 +479,15 @@ else if (_currentQuestion != null)
         await ProgressService.RecordAnswerAsync(_currentQuestion.Word.Id, correct);
         StateHasChanged();
 
-        // Fast auto-advance with smooth fade-out and fade-in animation
+        // Auto-advance with deliberate feedback pause so the user's finger has lifted from the screen
         _autoAdvanceCts?.Cancel();
         _autoAdvanceCts = new CancellationTokenSource();
         var token = _autoAdvanceCts.Token;
 
         try
         {
-            // Crisp, fast feedback: 120ms on correct, 380ms on wrong
-            int delayMs = correct ? 120 : 380;
+            // Generous feedback pause: 520ms on correct, 920ms on incorrect (allows user to see result and completely lift touch)
+            int delayMs = correct ? 520 : 920;
             await Task.Delay(delayMs, token);
 
             if (!token.IsCancellationRequested)
@@ -497,6 +505,7 @@ else if (_currentQuestion != null)
     {
         if (_isTransitioning) return;
         _isTransitioning = true;
+        _isAcceptingInput = false;
 
         // 1. Fade OUT answered question (120ms)
         _transitionClass = "fade-out";
@@ -507,7 +516,7 @@ else if (_currentQuestion != null)
             await Task.Delay(120, token);
             if (!token.IsCancellationRequested)
             {
-                // 2. Switch question while faded out
+                // 2. Switch question while faded out (input remains locked)
                 NextQuestion();
 
                 if (!_quizComplete)
@@ -519,6 +528,12 @@ else if (_currentQuestion != null)
                     await Task.Delay(150, token);
                     _transitionClass = "";
                     StateHasChanged();
+
+                    // 4. Critical Settle Cooldown: wait 200ms before enabling input on the new buttons
+                    // This completely absorbs lingering touch releases, ghost clicks, and synthetic mobile taps!
+                    await Task.Delay(200, token);
+                    _isAcceptingInput = true;
+                    StateHasChanged();
                 }
             }
         }
@@ -529,6 +544,10 @@ else if (_currentQuestion != null)
         finally
         {
             _isTransitioning = false;
+            if (!_quizComplete && !_answerSelected)
+            {
+                _isAcceptingInput = true;
+            }
         }
     }
 
@@ -551,6 +570,7 @@ else if (_currentQuestion != null)
             _currentQuestion = _questions[_currentQuestionIndex];
             _selectedAnswer = null;
             _answerSelected = false;
+            // Note: _isAcceptingInput remains FALSE until fade-in & cooldown complete in AnimateToNextQuestionAsync
 
             if (_currentQuestion.IsSpanishToEnglish)
             {
@@ -573,6 +593,7 @@ else if (_currentQuestion != null)
     {
         _autoAdvanceCts?.Cancel();
         _quizComplete = true;
+        _isAcceptingInput = true;
         _accuracy = _questions.Count > 0 ? (_correctAnswers * 100.0 / _questions.Count) : 0;
 
         var session = new QuizSession
@@ -597,6 +618,7 @@ else if (_currentQuestion != null)
         _autoAdvanceCts?.Cancel();
         _quizStarted = false;
         _quizComplete = false;
+        _isAcceptingInput = true;
     }
 
     private void GoHome()
@@ -612,17 +634,19 @@ else if (_currentQuestion != null)
 
     private string GetOptionStyle(SpanishWord option, bool isSelected, bool isCorrect)
     {
-        if (!_answerSelected) return "";
+        var pointerStyle = !_isAcceptingInput ? "pointer-events: none;" : "";
+
+        if (!_answerSelected) return pointerStyle;
 
         if (isCorrect)
         {
-            return "border-color: #16A34A !important; background-color: #ECFDF5 !important; color: #15803D !important; transform: scale(1.02); box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);";
+            return $"{pointerStyle} border-color: #16A34A !important; background-color: #ECFDF5 !important; color: #15803D !important; transform: scale(1.02); box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);";
         }
         if (isSelected && !isCorrect)
         {
-            return "border-color: #DC2626 !important; background-color: #FEF2F2 !important; color: #B91C1C !important;";
+            return $"{pointerStyle} border-color: #DC2626 !important; background-color: #FEF2F2 !important; color: #B91C1C !important;";
         }
-        return "opacity: 0.5;";
+        return $"{pointerStyle} opacity: 0.5;";
     }
 
     private string GetAccuracyColor() => _accuracy switch

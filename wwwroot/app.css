@@ -425,6 +425,8 @@ html, body {
     min-height: 64px;
     text-align: left;
     width: 100%;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
 }
 
 .quiz-compass-btn-top {
