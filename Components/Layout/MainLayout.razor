@@ -1,6 +1,8 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject SpanishWordLearner.Services.ProgressService ProgressService
+@inject SpanishWordLearner.Services.AuthService AuthService
+@inject IDialogService DialogService
 @implements IDisposable
 
 <MudThemeProvider Theme="_theme" />
@@ -39,7 +41,7 @@
                 </MudButton>
             </div>
 
-            <!-- Header Quick Badge -->
+            <!-- Header Quick Badge & Account -->
             <div class="d-flex align-center" style="gap: 8px;">
                 <a href="statistics" class="d-flex align-center px-2.5 px-sm-3 py-1 text-decoration-none" style="background: #FAF8F5; border: 1px solid #EBE6DE; border-radius: 20px; gap: 5px; flex-shrink: 0; color: inherit;">
                     <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706;" />
@@ -47,6 +49,14 @@
                         @_learnedCount<span class="d-none d-sm-inline"> Palabras</span>
                     </span>
                 </a>
+
+                <MudTooltip Text="@(AuthService.IsAuthenticated ? AuthService.CurrentUserEmail : "Sincronización en la nube")">
+                    <MudIconButton Icon="@(AuthService.IsAuthenticated ? Icons.Material.Rounded.AccountCircle : Icons.Material.Rounded.CloudQueue)"
+                                   OnClick="OpenAuthDialog"
+                                   Size="Size.Medium"
+                                   Class="account-btn"
+                                   Style="@(AuthService.IsAuthenticated ? "color: #D9483B; background: #FDEEEB; border-radius: 50%;" : "color: #78716C; border-radius: 50%;")" />
+                </MudTooltip>
             </div>
         </MudContainer>
     </MudAppBar>
@@ -72,6 +82,12 @@
             <MudIcon Icon="@Icons.Material.Rounded.Analytics" Size="Size.Medium" />
             <span>Progreso</span>
         </a>
+        <button type="button" class="mobile-nav-item" @onclick="OpenAuthDialog" style="background: none; border: none; font-family: inherit; cursor: pointer;">
+            <MudIcon Icon="@(AuthService.IsAuthenticated ? Icons.Material.Rounded.AccountCircle : Icons.Material.Rounded.CloudQueue)" 
+                     Size="Size.Medium" 
+                     Style="@(AuthService.IsAuthenticated ? "color: #D9483B;" : "")" />
+            <span>@(AuthService.IsAuthenticated ? "Cuenta" : "Nube")</span>
+        </button>
     </nav>
 </MudLayout>
 
@@ -81,8 +97,34 @@
     protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += OnLocationChanged;
+        ProgressService.ProgressUpdated += OnProgressUpdated;
+        AuthService.AuthStateChanged += OnAuthStateChanged;
+
+        await RefreshLearnedCountAsync();
+    }
+
+    private async void OnProgressUpdated()
+    {
+        await RefreshLearnedCountAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnAuthStateChanged()
+    {
+        await RefreshLearnedCountAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RefreshLearnedCountAsync()
+    {
         var progress = await ProgressService.GetProgressAsync();
         _learnedCount = progress.TotalWordsLearned;
+    }
+
+    private async Task OpenAuthDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        await DialogService.ShowAsync<SpanishWordLearner.Components.Shared.AuthDialog>("", options);
     }
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
@@ -110,6 +152,8 @@
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+        ProgressService.ProgressUpdated -= OnProgressUpdated;
+        AuthService.AuthStateChanged -= OnAuthStateChanged;
     }
 
     private readonly MudTheme _theme = new()

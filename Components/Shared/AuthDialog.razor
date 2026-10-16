@@ -1,0 +1,269 @@
+@inject AuthService AuthService
+@inject ProgressService ProgressService
+@inject ISnackbar Snackbar
+
+<MudDialog DefaultFocus="DefaultFocus.FirstChild">
+    <TitleContent>
+        <div class="d-flex align-center" style="gap: 10px;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(217, 72, 59, 0.1); display: flex; align-items: center; justify-content: center;">
+                <MudIcon Icon="@(AuthService.IsAuthenticated ? Icons.Material.Rounded.AccountCircle : Icons.Material.Rounded.CloudSync)" 
+                         Style="color: #D9483B;" Size="Size.Medium" />
+            </div>
+            <div>
+                <MudText Typo="Typo.h6" Style="font-weight: 700; color: #1C1917; line-height: 1.2;">
+                    @(AuthService.IsAuthenticated ? "Tu Cuenta" : "Sincronización en la Nube")
+                </MudText>
+                <MudText Typo="Typo.caption" Style="color: #78716C;">
+                    @(AuthService.IsAuthenticated ? "Progreso sincronizado en tus dispositivos" : "Accede desde cualquier dispositivo sin perder tu progreso")
+                </MudText>
+            </div>
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        @if (!AuthService.IsConfigured)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="my-2" Icon="@Icons.Material.Rounded.Info">
+                <MudText Typo="Typo.body2" Style="color: #44403C; font-weight: 500;">
+                    El almacenamiento en la nube está en modo local. Para habilitar la sincronización entre dispositivos, añade tus claves gratuitas de Supabase en <code>appsettings.json</code>.
+                </MudText>
+                <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="color: #78716C;">
+                    Tu progreso actual está 100% seguro y guardado en este navegador.
+                </MudText>
+            </MudAlert>
+        }
+        else if (AuthService.IsAuthenticated)
+        {
+            <div class="pa-3 mb-3" style="background: #FAF8F5; border: 1px solid #EBE6DE; border-radius: 12px;">
+                <div class="d-flex align-center justify-space-between mb-2">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #78716C;">Sesión activa</span>
+                    <MudChip T="string" Color="Color.Success" Size="Size.Small" Variant="Variant.Text" Icon="@Icons.Material.Rounded.CheckCircle">
+                        Conectado
+                    </MudChip>
+                </div>
+                <div class="d-flex align-center" style="gap: 8px;">
+                    <MudIcon Icon="@Icons.Material.Rounded.Mail" Size="Size.Small" Style="color: #D97706;" />
+                    <span style="font-weight: 600; color: #1C1917; font-size: 0.95rem; word-break: break-all;">@AuthService.CurrentUserEmail</span>
+                </div>
+                @if (ProgressService.LastSyncedAt.HasValue)
+                {
+                    <div class="mt-2 text-muted" style="font-size: 0.75rem; color: #78716C;">
+                        Última sincronización: @ProgressService.LastSyncedAt.Value.ToLocalTime().ToString("g")
+                    </div>
+                }
+            </div>
+
+            <div class="d-flex flex-column" style="gap: 10px;">
+                <MudButton Variant="Variant.Outlined" 
+                           Color="Color.Primary" 
+                           FullWidth="true" 
+                           StartIcon="@Icons.Material.Rounded.Sync" 
+                           Disabled="@ProgressService.IsSyncing"
+                           OnClick="OnSyncNowClick">
+                    @(ProgressService.IsSyncing ? "Sincronizando datos..." : "Sincronizar ahora")
+                </MudButton>
+
+                <MudButton Variant="Variant.Text" 
+                           Color="Color.Error" 
+                           FullWidth="true" 
+                           StartIcon="@Icons.Material.Rounded.Logout" 
+                           OnClick="OnSignOutClick">
+                    Cerrar sesión
+                </MudButton>
+            </div>
+        }
+        else
+        {
+            <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pt-3">
+                <!-- Tab 1: Magic Link -->
+                <MudTabPanel Text="Enlace Mágico" Icon="@Icons.Material.Rounded.AutoAwesome">
+                    <MudText Typo="Typo.body2" Class="mb-3" Style="color: #78716C;">
+                        Ingresa tu correo y te enviaremos un enlace seguro para iniciar sesión con un solo toque, sin necesidad de recordar contraseñas.
+                    </MudText>
+                    <MudTextField @bind-Value="_magicEmail" 
+                                  Label="Correo electrónico" 
+                                  Variant="Variant.Outlined" 
+                                  InputType="InputType.Email" 
+                                  Adornment="Adornment.Start" 
+                                  AdornmentIcon="@Icons.Material.Rounded.Email"
+                                  Class="mb-3" />
+                    
+                    <MudButton Variant="Variant.Filled" 
+                               Style="background-color: #D9483B; color: white; text-transform: none; font-weight: 600;" 
+                               FullWidth="true" 
+                               Disabled="@_isSubmitting"
+                               OnClick="OnSendMagicLink">
+                        @if (_isSubmitting)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Enviando...</span>
+                        }
+                        else
+                        {
+                            <span>Enviar enlace mágico</span>
+                        }
+                    </MudButton>
+                </MudTabPanel>
+
+                <!-- Tab 2: Password -->
+                <MudTabPanel Text="Contraseña" Icon="@Icons.Material.Rounded.Lock">
+                    <div class="d-flex justify-center mb-2">
+                        <MudButtonGroup OverrideStyles="false">
+                            <MudButton Variant="@(_isSignUp ? Variant.Text : Variant.Filled)" 
+                                       Style="@(!_isSignUp ? "background-color: #D9483B; color: white;" : "")"
+                                       OnClick="@(() => _isSignUp = false)" Size="Size.Small">
+                                Iniciar sesión
+                            </MudButton>
+                            <MudButton Variant="@(_isSignUp ? Variant.Filled : Variant.Text)" 
+                                       Style="@(_isSignUp ? "background-color: #D9483B; color: white;" : "")"
+                                       OnClick="@(() => _isSignUp = true)" Size="Size.Small">
+                                Registrarse
+                            </MudButton>
+                        </MudButtonGroup>
+                    </div>
+
+                    <MudTextField @bind-Value="_email" 
+                                  Label="Correo electrónico" 
+                                  Variant="Variant.Outlined" 
+                                  InputType="InputType.Email" 
+                                  Adornment="Adornment.Start" 
+                                  AdornmentIcon="@Icons.Material.Rounded.Email"
+                                  Class="mb-2" />
+
+                    <MudTextField @bind-Value="_password" 
+                                  Label="Contraseña" 
+                                  Variant="Variant.Outlined" 
+                                  InputType="@_passwordInputType" 
+                                  Adornment="Adornment.End" 
+                                  AdornmentIcon="@_passwordInputIcon" 
+                                  OnAdornmentClick="TogglePasswordVisibility"
+                                  Class="mb-3" />
+
+                    <MudButton Variant="Variant.Filled" 
+                               Style="background-color: #D9483B; color: white; text-transform: none; font-weight: 600;" 
+                               FullWidth="true" 
+                               Disabled="@_isSubmitting"
+                               OnClick="OnPasswordSubmit">
+                        @if (_isSubmitting)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Procesando...</span>
+                        }
+                        else
+                        {
+                            <span>@(_isSignUp ? "Crear cuenta y sincronizar" : "Iniciar sesión")</span>
+                        }
+                    </MudButton>
+                </MudTabPanel>
+            </MudTabs>
+
+            <div class="mt-3 pa-2 d-flex align-center" style="background: rgba(217, 119, 6, 0.08); border-radius: 8px; gap: 8px;">
+                <MudIcon Icon="@Icons.Material.Rounded.MergeType" Size="Size.Small" Style="color: #D97706; flex-shrink: 0;" />
+                <span style="font-size: 0.75rem; color: #78716C;">
+                    Tu progreso actual como invitado se fusionará automáticamente al iniciar sesión.
+                </span>
+            </div>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Close" Color="Color.Default" Variant="Variant.Text">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string _magicEmail = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private bool _isSignUp = false;
+    private bool _isSubmitting = false;
+
+    private bool _showPassword = false;
+    private InputType _passwordInputType => _showPassword ? InputType.Text : InputType.Password;
+    private string _passwordInputIcon => _showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
+
+    private void TogglePasswordVisibility()
+    {
+        _showPassword = !_showPassword;
+    }
+
+    private async Task OnSendMagicLink()
+    {
+        if (string.IsNullOrWhiteSpace(_magicEmail) || !_magicEmail.Contains("@"))
+        {
+            Snackbar.Add("Por favor ingresa un correo electrónico válido.", Severity.Warning);
+            return;
+        }
+
+        _isSubmitting = true;
+        var result = await AuthService.SendMagicLinkAsync(_magicEmail);
+        _isSubmitting = false;
+
+        if (result.Success)
+        {
+            Snackbar.Add("¡Enlace mágico enviado! Revisa tu bandeja de entrada.", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            Snackbar.Add($"Error: {result.ErrorMessage}", Severity.Error);
+        }
+    }
+
+    private async Task OnPasswordSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(_email) || !_email.Contains("@"))
+        {
+            Snackbar.Add("Por favor ingresa un correo electrónico válido.", Severity.Warning);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_password) || _password.Length < 6)
+        {
+            Snackbar.Add("La contraseña debe tener al menos 6 caracteres.", Severity.Warning);
+            return;
+        }
+
+        _isSubmitting = true;
+        (bool Success, string? ErrorMessage) result;
+
+        if (_isSignUp)
+        {
+            result = await AuthService.SignUpWithPasswordAsync(_email, _password);
+        }
+        else
+        {
+            result = await AuthService.SignInWithPasswordAsync(_email, _password);
+        }
+
+        _isSubmitting = false;
+
+        if (result.Success)
+        {
+            Snackbar.Add(_isSignUp ? "¡Cuenta creada y sincronizada exitosamente!" : "¡Bienvenido de vuelta!", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            Snackbar.Add($"Error: {result.ErrorMessage}", Severity.Error);
+        }
+    }
+
+    private async Task OnSyncNowClick()
+    {
+        await ProgressService.SyncWithCloudAsync();
+        Snackbar.Add("Progreso sincronizado con la nube.", Severity.Success);
+    }
+
+    private async Task OnSignOutClick()
+    {
+        await AuthService.SignOutAsync();
+        Snackbar.Add("Sesión cerrada.", Severity.Info);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Close() => MudDialog.Cancel();
+}
