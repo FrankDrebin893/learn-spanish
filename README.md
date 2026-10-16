@@ -57,7 +57,7 @@ This codebase is agent-agnostic. AI coding assistants (Google Antigravity, Claud
 ```bash
 # Clone the repository with submodules
 git clone --recurse-submodules <repository-url>
-cd SpanishWordLearningApp
+cd learn-spanish
 
 # Run the development server with hot-reload
 dotnet run --project SpanishWordLearner.csproj

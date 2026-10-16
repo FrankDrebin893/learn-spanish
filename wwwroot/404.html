@@ -16,9 +16,9 @@
         var pathSegmentsToKeep = 0;
         if (segments.length > 0) {
             var firstSegment = segments[0].toLowerCase();
-            // If the first segment is explicitly SpanishWordLearningApp or is NOT an internal SPA page route,
+            // If the first segment is explicitly learn-spanish or spanishwordlearningapp, or is NOT an internal SPA page route,
             // it represents the project repository subpath on the domain (keep 1 segment).
-            if (firstSegment === 'spanishwordlearningapp' || !knownRoutes.includes(firstSegment)) {
+            if (firstSegment === 'learn-spanish' || firstSegment === 'spanishwordlearningapp' || !knownRoutes.includes(firstSegment)) {
                 pathSegmentsToKeep = 1;
             }
         }

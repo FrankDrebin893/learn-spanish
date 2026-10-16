@@ -532,6 +532,47 @@ html, body {
     font-weight: 400;
 }
 
+/* Tabular Numbers */
+.tabular-numbers {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* Tierra Hero Card */
+.tierra-hero-card {
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    transition: all 0.25s ease;
+}
+
+/* Literary Example Sentences */
+.literary-example {
+    background: #FAF8F5;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-top: 12px;
+    text-align: left;
+    width: 100%;
+}
+
+.literary-example-quote {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.literary-example-translation {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
 /* Blazor Error Banner */
 #blazor-error-ui {
     display: none;
