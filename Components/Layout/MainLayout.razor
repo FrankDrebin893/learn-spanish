@@ -9,8 +9,8 @@
 <MudSnackbarProvider />
 
 <MudLayout Style="background-color: #FAF8F5; min-height: 100vh;">
-    <!-- Top Navigation Bar (Desktop & Tablet) -->
-    <MudAppBar Elevation="0" Style="background: #FFFFFF; border-bottom: 1px solid #EBE6DE; height: 64px;" Fixed="true">
+    <!-- Top Navigation Bar -->
+    <MudAppBar Elevation="0" Class="app-header" Fixed="true">
         <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex align-center justify-space-between px-3 px-md-4">
             <!-- Brand -->
             <a href="./" class="d-flex align-center text-decoration-none" style="gap: 10px; color: inherit;">
@@ -29,13 +29,9 @@
                            Class="px-3 py-2" Style="@GetNavStyle("/")">
                     Inicio
                 </MudButton>
-                <MudButton Variant="Variant.Text" Href="learn" StartIcon="@Icons.Material.Rounded.School"
-                           Class="px-3 py-2" Style="@GetNavStyle("/learn")">
-                    Aprender
-                </MudButton>
                 <MudButton Variant="Variant.Text" Href="quiz" StartIcon="@Icons.Material.Rounded.Quiz"
                            Class="px-3 py-2" Style="@GetNavStyle("/quiz")">
-                    Práctica
+                    Cuestionario
                 </MudButton>
                 <MudButton Variant="Variant.Text" Href="statistics" StartIcon="@Icons.Material.Rounded.Analytics"
                            Class="px-3 py-2" Style="@GetNavStyle("/statistics")">
@@ -45,19 +41,19 @@
 
             <!-- Header Quick Badge -->
             <div class="d-flex align-center" style="gap: 8px;">
-                <div class="d-flex align-center px-2.5 px-sm-3 py-1" style="background: #FAF8F5; border: 1px solid #EBE6DE; border-radius: 20px; gap: 5px; flex-shrink: 0;">
+                <a href="statistics" class="d-flex align-center px-2.5 px-sm-3 py-1 text-decoration-none" style="background: #FAF8F5; border: 1px solid #EBE6DE; border-radius: 20px; gap: 5px; flex-shrink: 0; color: inherit;">
                     <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706;" />
                     <span class="tabular-numbers" style="font-size: 0.82rem; font-weight: 700; color: #1C1917;">
                         @_learnedCount<span class="d-none d-sm-inline"> Palabras</span>
                     </span>
-                </div>
+                </a>
             </div>
         </MudContainer>
     </MudAppBar>
 
     <!-- Main Page Content Area -->
-    <MudMainContent Style="padding-top: 76px; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));">
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="px-3 px-sm-4 py-2 py-sm-4">
+    <MudMainContent Class="app-main-content">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="app-page-container px-3 px-sm-4">
             @Body
         </MudContainer>
     </MudMainContent>
@@ -68,13 +64,9 @@
             <MudIcon Icon="@Icons.Material.Rounded.Home" Size="Size.Medium" />
             <span>Inicio</span>
         </a>
-        <a href="learn" class="mobile-nav-item @(IsActive("/learn") ? "active" : "")">
-            <MudIcon Icon="@Icons.Material.Rounded.School" Size="Size.Medium" />
-            <span>Aprender</span>
-        </a>
         <a href="quiz" class="mobile-nav-item @(IsActive("/quiz") ? "active" : "")">
             <MudIcon Icon="@Icons.Material.Rounded.Quiz" Size="Size.Medium" />
-            <span>Práctica</span>
+            <span>Cuestionario</span>
         </a>
         <a href="statistics" class="mobile-nav-item @(IsActive("/statistics") ? "active" : "")">
             <MudIcon Icon="@Icons.Material.Rounded.Analytics" Size="Size.Medium" />

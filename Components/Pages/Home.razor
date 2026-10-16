@@ -13,7 +13,7 @@
         Aprende Español por Frecuencia
     </MudText>
     <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 0.98rem; max-width: 580px; margin: 0 auto; line-height: 1.5;">
-        Domina las <strong>@(WordService.TotalWordCount.ToString("N0"))</strong> palabras más frecuentes del idioma mediante tarjetas inteligentes, audio nativo y práctica interactiva.
+        Domina las <strong>@(WordService.TotalWordCount.ToString("N0"))</strong> palabras más frecuentes del idioma mediante cuestionarios dinámicos, audio nativo y práctica interactiva.
     </MudText>
 </div>
 
@@ -25,36 +25,36 @@
 }
 else
 {
-    <!-- Primary Focus: Hero Study Card -->
+    <!-- Primary Focus: Hero Quiz Card -->
     <div class="tierra-hero-card pa-5 pa-sm-8 mb-5">
         <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-3 mb-sm-4 gap-2">
             <span class="d-inline-flex align-center gap-1 px-3 py-1 rounded-pill" style="background: #FDEEEB; color: #BF3A2E; font-size: 0.8rem; font-weight: 700;">
                 <MudIcon Icon="@Icons.Material.Rounded.Star" Size="Size.Small" /> Nivel @GetProficiencyLevel()
             </span>
             <span class="tabular-numbers" style="font-size: 0.85rem; font-weight: 600; color: #78716C;">
-                Top 200 palabras esenciales
+                Top @WordService.TotalWordCount palabras esenciales
             </span>
         </div>
 
         <div class="mb-4 mb-sm-5">
             <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.01em; font-size: clamp(1.3rem, 4vw, 1.75rem); line-height: 1.25;" Class="mb-2">
-                Continuar tu Sesión de Estudio
+                Cuestionario de Vocabulario Activo
             </MudText>
-            <MudText Typo="Typo.body1" Style="color: #57534E; max-width: 540px; font-size: 0.95rem; line-height: 1.5;">
-                Estudia tarjetas interactivas organizadas por frecuencia natural de uso con pronunciación nativa y refuerzo activo.
+            <MudText Typo="Typo.body1" Style="color: #57534E; max-width: 560px; font-size: 0.95rem; line-height: 1.5;">
+                Pon a prueba tu retención inmediata con preguntas de opción múltiple, rachas de aciertos y pronunciación nativa en tiempo real.
             </MudText>
         </div>
 
         <div class="d-flex flex-column flex-sm-row align-stretch align-sm-center justify-space-between gap-3 pt-1">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="learn" Size="Size.Large"
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="quiz" Size="Size.Large"
                        StartIcon="@Icons.Material.Rounded.PlayArrow"
                        Style="border-radius: 12px; font-weight: 700; font-size: 1rem; padding: 12px 24px; text-transform: none; box-shadow: 0 4px 14px rgba(217, 72, 59, 0.28);">
-                Comenzar Estudio Ahora
+                Comenzar Cuestionario Ahora
             </MudButton>
 
             <div class="d-none d-sm-flex align-center gap-2" style="font-size: 0.85rem; color: #78716C;">
                 <MudIcon Icon="@Icons.Material.Rounded.Keyboard" Size="Size.Small" />
-                <span>Atajos con <span class="kbd-pill">Espacio</span> y números</span>
+                <span>Atajos con <span class="kbd-pill">Flechas</span> o números</span>
             </div>
         </div>
 
@@ -115,22 +115,22 @@ else
                 <div>
                     <div class="d-flex align-center justify-space-between mb-3">
                         <span style="font-size: 0.78rem; font-weight: 700; color: #E0872E; text-transform: uppercase; letter-spacing: 0.04em;">
-                            Práctica Rápida
+                            Modalidades de Prueba
                         </span>
                         <MudIcon Icon="@Icons.Material.Rounded.Quiz" Size="Size.Small" Style="color: #E0872E;" />
                     </div>
                     <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 700; color: #1C1917;">
-                        Cuestionario Interactivo
+                        Práctica Personalizada
                     </MudText>
                     <MudText Typo="Typo.body2" Style="color: #57534E; line-height: 1.5;" Class="mb-4">
-                        Comprueba tu retención con retos de opción múltiple, rachas de aciertos y atajos de teclado rápidos.
+                        Ajusta la dirección (Español ➔ Inglés, Inglés ➔ Español o Mixto), elige la cantidad de preguntas y define el alcance de frecuencia.
                     </MudText>
                 </div>
                 <div>
                     <MudButton Variant="Variant.Outlined" Color="Color.Primary" Href="quiz" FullWidth="true"
-                               StartIcon="@Icons.Material.Rounded.CheckCircle"
+                               StartIcon="@Icons.Material.Rounded.Tune"
                                Style="border-radius: 10px; font-weight: 700; text-transform: none; border-color: #D9483B; height: 44px;">
-                        Hacer Cuestionario
+                        Configurar Cuestionario
                     </MudButton>
                 </div>
             </MudPaper>
@@ -192,8 +192,8 @@ else
                 }
 
                 <div class="pt-3">
-                    <a href="learn" class="d-inline-flex align-center gap-1 text-decoration-none" style="color: #D9483B; font-size: 0.85rem; font-weight: 700;">
-                        <span>Estudiar más palabras</span>
+                    <a href="quiz" class="d-inline-flex align-center gap-1 text-decoration-none" style="color: #D9483B; font-size: 0.85rem; font-weight: 700;">
+                        <span>Practicar en cuestionario</span>
                         <MudIcon Icon="@Icons.Material.Rounded.ArrowForward" Size="Size.Small" />
                     </a>
                 </div>

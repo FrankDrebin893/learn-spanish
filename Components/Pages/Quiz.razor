@@ -14,31 +14,31 @@
 @if (!_quizStarted)
 {
     <!-- Quiz Setup Screen -->
-    <div class="text-center mb-6 pt-2">
-        <MudText Typo="Typo.h3" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em;" Class="mb-2">
+    <div class="text-center mb-3 mb-sm-6 pt-1 pt-sm-2 quiz-setup-header">
+        <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.02em;" Class="mb-1">
             Cuestionario de Vocabulario
         </MudText>
-        <MudText Typo="Typo.body1" Style="color: #57534E; font-size: 1rem;">
+        <MudText Typo="Typo.body2" Style="color: #57534E; font-size: 0.95rem;">
             Personaliza tu prueba para medir tu retención y consolidar palabras activas.
         </MudText>
     </div>
 
-    <MudPaper Elevation="0" Class="tierra-card pa-6 pa-md-8 mb-6">
-        <div class="d-flex flex-column gap-4 mb-6">
-            <MudSelect T="int" Label="Número de preguntas" @bind-Value="_questionCount" Variant="Variant.Outlined">
+    <MudPaper Elevation="0" Class="tierra-card quiz-setup-card pa-4 pa-sm-6 pa-md-8 mb-4 mb-sm-6">
+        <div class="d-flex flex-column gap-3 gap-sm-4 mb-4 mb-sm-6">
+            <MudSelect T="int" Label="Número de preguntas" @bind-Value="_questionCount" Variant="Variant.Outlined" Dense="true">
                 <MudSelectItem Value="5">5 preguntas (rápido · ~1 min)</MudSelectItem>
                 <MudSelectItem Value="10">10 preguntas (estándar · ~2 min)</MudSelectItem>
                 <MudSelectItem Value="20">20 preguntas (completo · ~5 min)</MudSelectItem>
                 <MudSelectItem Value="50">50 preguntas (maratón)</MudSelectItem>
             </MudSelect>
 
-            <MudSelect T="string" Label="Dirección del reto" @bind-Value="_quizType" Variant="Variant.Outlined">
+            <MudSelect T="string" Label="Dirección del reto" @bind-Value="_quizType" Variant="Variant.Outlined" Dense="true">
                 <MudSelectItem Value="@("SpanishToEnglish")">Español ➔ Inglés (Reconocimiento)</MudSelectItem>
                 <MudSelectItem Value="@("EnglishToSpanish")">Inglés ➔ Español (Producción activa)</MudSelectItem>
                 <MudSelectItem Value="@("Mixed")">Mixto (ambas direcciones)</MudSelectItem>
             </MudSelect>
 
-            <MudSelect T="int" Label="Rango de vocabulario" @bind-Value="_frequencyScope" Variant="Variant.Outlined">
+            <MudSelect T="int" Label="Rango de vocabulario" @bind-Value="_frequencyScope" Variant="Variant.Outlined" Dense="true">
                 <MudSelectItem Value="100">Top 100 palabras (esenciales cotidianas)</MudSelectItem>
                 <MudSelectItem Value="500">Top 500 palabras (intermedio)</MudSelectItem>
                 <MudSelectItem Value="1000">Top 1,000 palabras (avanzado)</MudSelectItem>
@@ -48,7 +48,8 @@
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
                    OnClick="StartQuiz" StartIcon="@Icons.Material.Rounded.PlayArrow"
-                   Style="border-radius: 12px; height: 50px; font-weight: 700; font-size: 1rem; text-transform: none; box-shadow: 0 4px 14px rgba(217, 72, 59, 0.28);">
+                   Class="quiz-start-btn"
+                   Style="border-radius: 12px; height: 48px; font-weight: 700; font-size: 1rem; text-transform: none; box-shadow: 0 4px 14px rgba(217, 72, 59, 0.28);">
             Comenzar Cuestionario
         </MudButton>
     </MudPaper>
@@ -56,26 +57,26 @@
 else if (_quizComplete)
 {
     <!-- Quiz Complete Celebration Screen -->
-    <MudPaper Elevation="0" Class="tierra-hero-card pa-6 pa-md-8 text-center mb-6">
-        <div style="@($"width: 68px; height: 68px; border-radius: 50%; background: {(_accuracy >= 70 ? "#FEF3E7" : "#FDEEEB")}; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;")">
+    <MudPaper Elevation="0" Class="tierra-hero-card quiz-celebration-card pa-4 pa-sm-6 pa-md-8 text-center mb-4 mb-sm-6">
+        <div class="quiz-celebration-icon" style="@($"border-radius: 50%; background: {(_accuracy >= 70 ? "#FEF3E7" : "#FDEEEB")}; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;")">
             <MudIcon Icon="@(_accuracy >= 70 ? Icons.Material.Rounded.EmojiEvents : Icons.Material.Rounded.School)"
-                     Size="Size.Large" Style="@($"color: {(_accuracy >= 70 ? "#D97706" : "#D9483B")}; font-size: 36px;")" />
+                     Size="Size.Large" Style="@($"color: {(_accuracy >= 70 ? "#D97706" : "#D9483B")};")" />
         </div>
 
-        <MudText Typo="Typo.h4" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.01em;" Class="mb-1">
+        <MudText Typo="Typo.h5" Style="font-weight: 800; color: #1C1917; letter-spacing: -0.01em;" Class="mb-1">
             ¡Prueba Finalizada!
         </MudText>
-        <MudText Typo="Typo.body2" Style="color: #78716C;" Class="mb-4">
+        <MudText Typo="Typo.body2" Style="color: #78716C;" Class="mb-3">
             @GetAccuracyMessage()
         </MudText>
 
         <!-- Big Score Hero -->
-        <div class="pa-5 rounded-2xl my-4 text-center" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
-            <div class="tabular-numbers" style="font-size: 3.5rem; font-weight: 800; color: #1C1917; line-height: 1;">
-                @_correctAnswers <span style="font-size: 1.6rem; color: #78716C; font-weight: 600;">/ @_questions.Count</span>
+        <div class="pa-3 pa-sm-4 rounded-xl my-3 text-center" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
+            <div class="tabular-numbers quiz-score-display" style="font-weight: 800; color: #1C1917; line-height: 1;">
+                @_correctAnswers <span style="font-size: 1.3rem; color: #78716C; font-weight: 600;">/ @_questions.Count</span>
             </div>
-            <div class="mt-2">
-                <span class="d-inline-flex align-center px-3 py-1 rounded-pill" style="@($"background: {(_accuracy >= 70 ? "#ECFDF5" : "#FEF2F2")}; color: {(_accuracy >= 70 ? "#16A34A" : "#DC2626")}; font-weight: 700; font-size: 0.9rem;")">
+            <div class="mt-1.5">
+                <span class="d-inline-flex align-center px-2.5 py-0.5 rounded-pill" style="@($"background: {(_accuracy >= 70 ? "#ECFDF5" : "#FEF2F2")}; color: {(_accuracy >= 70 ? "#16A34A" : "#DC2626")}; font-weight: 700; font-size: 0.85rem;")">
                     Precisión final: @_accuracy.ToString("F0")%
                 </span>
             </div>
@@ -83,21 +84,21 @@ else if (_quizComplete)
 
         @if (_missedWords.Count > 0)
         {
-            <div class="mt-6 mb-5 text-left">
-                <div class="d-flex align-center gap-1 mb-3" style="font-size: 0.85rem; font-weight: 700; color: #D9483B;">
+            <div class="mt-4 mb-3 text-left">
+                <div class="d-flex align-center gap-1 mb-2" style="font-size: 0.82rem; font-weight: 700; color: #D9483B;">
                     <MudIcon Icon="@Icons.Material.Rounded.Replay" Size="Size.Small" />
                     <span>Palabras para reforzar (@_missedWords.Count)</span>
                 </div>
-                <div class="d-flex flex-column gap-2">
+                <div class="d-flex flex-column gap-1.5 quiz-missed-list" style="max-height: 160px; overflow-y: auto; padding-right: 4px;">
                     @foreach (var word in _missedWords)
                     {
-                        <div class="d-flex justify-space-between align-center pa-3 rounded-lg" style="background: #FFFFFF; border: 1px solid #EBE6DE;">
+                        <div class="d-flex justify-space-between align-center pa-2 px-3 rounded-lg" style="background: #FFFFFF; border: 1px solid #EBE6DE;">
                             <div>
-                                <span style="font-weight: 700; color: #1C1917; font-size: 1rem;">@word.Spanish</span>
-                                <span style="font-size: 0.85rem; color: #78716C; margin-left: 8px;">@word.English</span>
+                                <span style="font-weight: 700; color: #1C1917; font-size: 0.95rem;">@word.Spanish</span>
+                                <span style="font-size: 0.82rem; color: #78716C; margin-left: 6px;">@word.English</span>
                             </div>
-                            <button class="audio-btn" style="width: 32px; height: 32px;" @onclick="@(() => PlaySpanishAudio(word.Spanish))" title="Escuchar">
-                                <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                            <button class="audio-btn" style="width: 28px; height: 28px;" @onclick="@(() => PlaySpanishAudio(word.Spanish))" title="Escuchar">
+                                <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" Style="font-size: 16px;" />
                             </button>
                         </div>
                     }
@@ -105,20 +106,20 @@ else if (_quizComplete)
             </div>
         }
 
-        <div class="d-flex flex-column flex-sm-row gap-3 pt-2">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
+        <div class="d-flex flex-column flex-sm-row gap-2 gap-sm-3 pt-2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Medium"
                        OnClick="RestartQuiz" StartIcon="@Icons.Material.Rounded.Refresh"
-                       Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none; box-shadow: 0 4px 12px rgba(217, 72, 59, 0.2);">
+                       Style="border-radius: 12px; height: 44px; font-weight: 700; text-transform: none; box-shadow: 0 4px 12px rgba(217, 72, 59, 0.2);">
                 Repetir Prueba
             </MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Size="Size.Large"
+            <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Size="Size.Medium"
                        OnClick="ExitQuiz" StartIcon="@Icons.Material.Rounded.Tune"
-                       Style="border-radius: 12px; height: 48px; font-weight: 700; text-transform: none; border-color: #DFD7CC; color: #57534E;">
+                       Style="border-radius: 12px; height: 44px; font-weight: 700; text-transform: none; border-color: #DFD7CC; color: #57534E;">
                 Nueva Configuración
             </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" Size="Size.Large"
+            <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" Size="Size.Medium"
                        OnClick="GoHome" StartIcon="@Icons.Material.Rounded.Home"
-                       Style="border-radius: 12px; height: 48px; font-weight: 600; text-transform: none; color: #78716C;">
+                       Style="border-radius: 12px; height: 44px; font-weight: 600; text-transform: none; color: #78716C;">
                 Inicio
             </MudButton>
         </div>
@@ -126,208 +127,210 @@ else if (_quizComplete)
 }
 else if (_currentQuestion != null)
 {
-    <!-- Active Quiz Question Screen with Directional Compass Layout -->
-    <div class="d-flex justify-space-between align-center mb-2 px-1">
-        <div class="d-flex align-baseline gap-2">
-            <span class="tabular-numbers" style="font-size: 0.92rem; font-weight: 700; color: #1C1917;">
-                Pregunta @(_currentQuestionIndex + 1)
-            </span>
-            <span class="tabular-numbers" style="font-size: 0.8rem; font-weight: 500; color: #78716C;">
-                de @_questions.Count
-            </span>
-        </div>
-        @if (_currentStreak > 1)
-        {
-            <div class="d-flex align-center gap-1 px-2.5 py-0.5 rounded-pill" style="background: #FEF3E7; border: 1px solid #FCD34D;">
-                <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706;" />
-                <span class="tabular-numbers" style="font-size: 0.78rem; font-weight: 700; color: #B45309;">@_currentStreak en racha</span>
+    <!-- Active Quiz Question Screen with Directional Compass Layout (1-Screen Optimized) -->
+    <div class="quiz-active-viewport">
+        <div class="d-flex justify-space-between align-center mb-1 mb-sm-2 px-1 quiz-active-header">
+            <div class="d-flex align-baseline gap-2">
+                <span class="tabular-numbers" style="font-size: 0.92rem; font-weight: 700; color: #1C1917;">
+                    Pregunta @(_currentQuestionIndex + 1)
+                </span>
+                <span class="tabular-numbers" style="font-size: 0.8rem; font-weight: 500; color: #78716C;">
+                    de @_questions.Count
+                </span>
             </div>
-        }
-    </div>
+            @if (_currentStreak > 1)
+            {
+                <div class="d-flex align-center gap-1 px-2.5 py-0.5 rounded-pill" style="background: #FEF3E7; border: 1px solid #FCD34D;">
+                    <MudIcon Icon="@Icons.Material.Rounded.LocalFireDepartment" Size="Size.Small" Style="color: #D97706; font-size: 16px;" />
+                    <span class="tabular-numbers" style="font-size: 0.76rem; font-weight: 700; color: #B45309;">@_currentStreak en racha</span>
+                </div>
+            }
+        </div>
 
-    <MudProgressLinear Color="Color.Primary" Rounded="true"
-                       Value="@((_currentQuestionIndex + 1) * 100.0 / _questions.Count)"
-                       Class="mb-5" Style="height: 6px; background-color: #EBE6DE;" />
+        <MudProgressLinear Color="Color.Primary" Rounded="true"
+                           Value="@((_currentQuestionIndex + 1) * 100.0 / _questions.Count)"
+                           Class="mb-2 mb-sm-4 quiz-progress" Style="height: 4px; background-color: #EBE6DE;" />
 
-    <!-- Question Card with Smooth Fade-Out / Fade-In Animation -->
-    <div class="quiz-card-stage @GetTransitionClass()">
-        <MudPaper Elevation="0" Class="tierra-card pa-4 pa-md-6 mb-4">
-            <div class="quiz-compass-grid">
-                <!-- TOP OPTION (↑ Arriba) -->
-                @if (_currentQuestion.Options.Count > 0)
-                {
-                    var optTop = _currentQuestion.Options[0];
-                    var isSelected = _selectedAnswer == optTop;
-                    var isCorrect = optTop.Id == _currentQuestion.Word.Id;
+        <!-- Question Card with Smooth Fade-Out / Fade-In Animation -->
+        <div class="quiz-card-stage @GetTransitionClass()">
+            <MudPaper Elevation="0" Class="tierra-card quiz-question-paper pa-3 pa-sm-4 pa-md-6 mb-2 mb-sm-4">
+                <div class="quiz-compass-grid">
+                    <!-- TOP OPTION (↑ Arriba) -->
+                    @if (_currentQuestion.Options.Count > 0)
+                    {
+                        var optTop = _currentQuestion.Options[0];
+                        var isSelected = _selectedAnswer == optTop;
+                        var isCorrect = optTop.Id == _currentQuestion.Word.Id;
 
-                    <button class="quiz-compass-btn quiz-compass-btn-top"
-                            style="@GetOptionStyle(optTop, isSelected, isCorrect)"
-                            disabled="@_answerSelected"
-                            @onclick="@(() => SelectAnswer(optTop))">
-                        <div class="d-flex align-center gap-3">
-                            <span class="kbd-pill-arrow">↑</span>
-                            <span style="font-weight: 600; font-size: 1.05rem;">@GetOptionText(optTop)</span>
-                        </div>
-                        @if (_answerSelected)
-                        {
-                            @if (isCorrect)
+                        <button class="quiz-compass-btn quiz-compass-btn-top"
+                                style="@GetOptionStyle(optTop, isSelected, isCorrect)"
+                                disabled="@_answerSelected"
+                                @onclick="@(() => SelectAnswer(optTop))">
+                            <div class="d-flex align-center gap-2 gap-sm-3" style="min-width: 0;">
+                                <span class="kbd-pill-arrow">↑</span>
+                                <span class="quiz-option-text">@GetOptionText(optTop)</span>
+                            </div>
+                            @if (_answerSelected)
                             {
-                                <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                                @if (isCorrect)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" Class="quiz-result-icon" />
+                                }
+                                else if (isSelected)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" Class="quiz-result-icon" />
+                                }
                             }
-                            else if (isSelected)
+                        </button>
+                    }
+
+                    <!-- LEFT OPTION (← Izquierda) -->
+                    @if (_currentQuestion.Options.Count > 1)
+                    {
+                        var optLeft = _currentQuestion.Options[1];
+                        var isSelected = _selectedAnswer == optLeft;
+                        var isCorrect = optLeft.Id == _currentQuestion.Word.Id;
+
+                        <button class="quiz-compass-btn quiz-compass-btn-left"
+                                style="@GetOptionStyle(optLeft, isSelected, isCorrect)"
+                                disabled="@_answerSelected"
+                                @onclick="@(() => SelectAnswer(optLeft))">
+                            <div class="d-flex align-center gap-2 gap-sm-3 flex-sm-column flex-row" style="min-width: 0;">
+                                <span class="kbd-pill-arrow">←</span>
+                                <span class="quiz-option-text">@GetOptionText(optLeft)</span>
+                            </div>
+                            @if (_answerSelected)
                             {
-                                <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" />
+                                @if (isCorrect)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" Class="quiz-result-icon" />
+                                }
+                                else if (isSelected)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" Class="quiz-result-icon" />
+                                }
                             }
-                        }
-                    </button>
-                }
+                        </button>
+                    }
 
-                <!-- LEFT OPTION (← Izquierda) -->
-                @if (_currentQuestion.Options.Count > 1)
-                {
-                    var optLeft = _currentQuestion.Options[1];
-                    var isSelected = _selectedAnswer == optLeft;
-                    var isCorrect = optLeft.Id == _currentQuestion.Word.Id;
-
-                    <button class="quiz-compass-btn quiz-compass-btn-left"
-                            style="@GetOptionStyle(optLeft, isSelected, isCorrect)"
-                            disabled="@_answerSelected"
-                            @onclick="@(() => SelectAnswer(optLeft))">
-                        <div class="d-flex align-center gap-3 flex-sm-column flex-row" style="min-width: 0;">
-                            <span class="kbd-pill-arrow">←</span>
-                            <span class="quiz-option-text" style="font-weight: 600; font-size: 1.02rem; line-height: 1.3;">@GetOptionText(optLeft)</span>
-                        </div>
-                        @if (_answerSelected)
-                        {
-                            @if (isCorrect)
-                            {
-                                <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" />
-                            }
-                            else if (isSelected)
-                            {
-                                <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" />
-                            }
-                        }
-                    </button>
-                }
-
-                <!-- CENTER WORD STAGE (Palabra Central) -->
-                <div class="quiz-compass-center">
-                    <span style="font-size: 0.75rem; font-weight: 700; color: #78716C; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">
-                        @(_currentQuestion.IsSpanishToEnglish ? "¿Traducción al inglés?" : "¿Cómo se dice en español?")
-                    </span>
-
-                    <div class="d-flex align-center justify-center gap-2 flex-wrap my-1">
-                        <span style="font-size: clamp(1.6rem, 5.5vw, 2.25rem); font-weight: 800; color: #1C1917; letter-spacing: -0.02em; line-height: 1.15; word-break: break-word;">
-                            @(_currentQuestion.IsSpanishToEnglish ? _currentQuestion.Word.Spanish : _currentQuestion.Word.English)
+                    <!-- CENTER WORD STAGE (Palabra Central) -->
+                    <div class="quiz-compass-center">
+                        <span class="quiz-prompt-label">
+                            @(_currentQuestion.IsSpanishToEnglish ? "¿Traducción al inglés?" : "¿Cómo se dice en español?")
                         </span>
-                        @if (_currentQuestion.IsSpanishToEnglish)
+
+                        <div class="d-flex align-center justify-center gap-2 flex-wrap my-0.5">
+                            <span class="quiz-target-word">
+                                @(_currentQuestion.IsSpanishToEnglish ? _currentQuestion.Word.Spanish : _currentQuestion.Word.English)
+                            </span>
+                            @if (_currentQuestion.IsSpanishToEnglish)
+                            {
+                                <button class="audio-btn quiz-audio-btn" @onclick="@(() => PlaySpanishAudio(_currentQuestion.Word.Spanish))" title="Escuchar pronunciación">
+                                    <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
+                                </button>
+                            }
+                        </div>
+
+                        <span class="quiz-pos-label">
+                            @_currentQuestion.Word.PartOfSpeech
+                        </span>
+
+                        @if (_answerSelected)
                         {
-                            <button class="audio-btn" style="width: 36px; height: 36px;" @onclick="@(() => PlaySpanishAudio(_currentQuestion.Word.Spanish))" title="Escuchar pronunciación">
-                                <MudIcon Icon="@Icons.Material.Rounded.VolumeUp" Size="Size.Small" />
-                            </button>
+                            <div class="quiz-feedback-pill mt-1 animate-fadeIn" style="cursor: pointer;" @onclick="SkipAdvanceDelay" title="Toca para continuar">
+                                @if (_selectedAnswer?.Id == _currentQuestion.Word.Id)
+                                {
+                                    <span class="px-2.5 py-0.5 rounded-pill d-inline-flex align-center gap-1" style="background: #ECFDF5; color: #15803D; font-weight: 700; font-size: 0.8rem;">
+                                        <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Size="Size.Small" Style="font-size: 15px;" />
+                                        ¡Correcto!
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="px-2.5 py-0.5 rounded-pill d-inline-flex align-center gap-1" style="background: #FEF2F2; color: #B91C1C; font-weight: 700; font-size: 0.8rem;">
+                                        <MudIcon Icon="@Icons.Material.Rounded.Cancel" Size="Size.Small" Style="font-size: 15px;" />
+                                        Incorrecto
+                                    </span>
+                                }
+                            </div>
                         }
                     </div>
 
-                    <span style="font-size: 0.82rem; font-weight: 600; color: #E0872E; font-style: italic; display: block; margin-top: 2px;">
-                        @_currentQuestion.Word.PartOfSpeech
-                    </span>
-
-                    @if (_answerSelected)
+                    <!-- RIGHT OPTION (→ Derecha) -->
+                    @if (_currentQuestion.Options.Count > 2)
                     {
-                        <div class="mt-2 animate-fadeIn" style="cursor: pointer;" @onclick="SkipAdvanceDelay" title="Toca o presiona cualquier tecla para continuar">
-                            @if (_selectedAnswer?.Id == _currentQuestion.Word.Id)
+                        var optRight = _currentQuestion.Options[2];
+                        var isSelected = _selectedAnswer == optRight;
+                        var isCorrect = optRight.Id == _currentQuestion.Word.Id;
+
+                        <button class="quiz-compass-btn quiz-compass-btn-right"
+                                style="@GetOptionStyle(optRight, isSelected, isCorrect)"
+                                disabled="@_answerSelected"
+                                @onclick="@(() => SelectAnswer(optRight))">
+                            <div class="d-flex align-center gap-2 gap-sm-3 flex-sm-column flex-row" style="min-width: 0;">
+                                <span class="kbd-pill-arrow">→</span>
+                                <span class="quiz-option-text">@GetOptionText(optRight)</span>
+                            </div>
+                            @if (_answerSelected)
                             {
-                                <span class="px-2.5 py-0.5 rounded-pill d-inline-flex align-center gap-1" style="background: #ECFDF5; color: #15803D; font-weight: 700; font-size: 0.82rem;">
-                                    <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Size="Size.Small" Style="font-size: 16px;" />
-                                    ¡Correcto!
-                                </span>
+                                @if (isCorrect)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" Class="quiz-result-icon" />
+                                }
+                                else if (isSelected)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" Class="quiz-result-icon" />
+                                }
                             }
-                            else
+                        </button>
+                    }
+
+                    <!-- BOTTOM OPTION (↓ Abajo) -->
+                    @if (_currentQuestion.Options.Count > 3)
+                    {
+                        var optBottom = _currentQuestion.Options[3];
+                        var isSelected = _selectedAnswer == optBottom;
+                        var isCorrect = optBottom.Id == _currentQuestion.Word.Id;
+
+                        <button class="quiz-compass-btn quiz-compass-btn-bottom"
+                                style="@GetOptionStyle(optBottom, isSelected, isCorrect)"
+                                disabled="@_answerSelected"
+                                @onclick="@(() => SelectAnswer(optBottom))">
+                            <div class="d-flex align-center gap-2 gap-sm-3" style="min-width: 0;">
+                                <span class="kbd-pill-arrow">↓</span>
+                                <span class="quiz-option-text">@GetOptionText(optBottom)</span>
+                            </div>
+                            @if (_answerSelected)
                             {
-                                <span class="px-2.5 py-0.5 rounded-pill d-inline-flex align-center gap-1" style="background: #FEF2F2; color: #B91C1C; font-weight: 700; font-size: 0.82rem;">
-                                    <MudIcon Icon="@Icons.Material.Rounded.Cancel" Size="Size.Small" Style="font-size: 16px;" />
-                                    Incorrecto
-                                </span>
+                                @if (isCorrect)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" Class="quiz-result-icon" />
+                                }
+                                else if (isSelected)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" Class="quiz-result-icon" />
+                                }
                             }
-                        </div>
+                        </button>
                     }
                 </div>
-
-                <!-- RIGHT OPTION (→ Derecha) -->
-                @if (_currentQuestion.Options.Count > 2)
-                {
-                    var optRight = _currentQuestion.Options[2];
-                    var isSelected = _selectedAnswer == optRight;
-                    var isCorrect = optRight.Id == _currentQuestion.Word.Id;
-
-                    <button class="quiz-compass-btn quiz-compass-btn-right"
-                            style="@GetOptionStyle(optRight, isSelected, isCorrect)"
-                            disabled="@_answerSelected"
-                            @onclick="@(() => SelectAnswer(optRight))">
-                        <div class="d-flex align-center gap-3 flex-sm-column flex-row" style="min-width: 0;">
-                            <span class="kbd-pill-arrow">→</span>
-                            <span class="quiz-option-text" style="font-weight: 600; font-size: 1.02rem; line-height: 1.3;">@GetOptionText(optRight)</span>
-                        </div>
-                        @if (_answerSelected)
-                        {
-                            @if (isCorrect)
-                            {
-                                <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" />
-                            }
-                            else if (isSelected)
-                            {
-                                <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" />
-                            }
-                        }
-                    </button>
-                }
-
-                <!-- BOTTOM OPTION (↓ Abajo) -->
-                @if (_currentQuestion.Options.Count > 3)
-                {
-                    var optBottom = _currentQuestion.Options[3];
-                    var isSelected = _selectedAnswer == optBottom;
-                    var isCorrect = optBottom.Id == _currentQuestion.Word.Id;
-
-                    <button class="quiz-compass-btn quiz-compass-btn-bottom"
-                            style="@GetOptionStyle(optBottom, isSelected, isCorrect)"
-                            disabled="@_answerSelected"
-                            @onclick="@(() => SelectAnswer(optBottom))">
-                        <div class="d-flex align-center gap-3" style="min-width: 0;">
-                            <span class="kbd-pill-arrow">↓</span>
-                            <span class="quiz-option-text" style="font-weight: 600; font-size: 1.02rem;">@GetOptionText(optBottom)</span>
-                        </div>
-                        @if (_answerSelected)
-                        {
-                            @if (isCorrect)
-                            {
-                                <MudIcon Icon="@Icons.Material.Rounded.CheckCircle" Color="Color.Success" Size="Size.Small" />
-                            }
-                            else if (isSelected)
-                            {
-                                <MudIcon Icon="@Icons.Material.Rounded.Cancel" Color="Color.Error" Size="Size.Small" />
-                            }
-                        }
-                    </button>
-                }
-            </div>
-        </MudPaper>
-    </div>
-
-    <!-- Keyboard Shortcuts Hint Footer -->
-    <div class="d-flex align-center justify-center flex-wrap gap-2 gap-sm-4 text-center mt-3" style="font-size: 0.8rem; color: #78716C;">
-        <div class="d-none d-sm-flex align-center gap-1.5">
-            <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">↑</span>
-            <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">←</span>
-            <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">↓</span>
-            <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">→</span>
-            <span class="ml-1 font-weight-bold">Flechas</span>
+            </MudPaper>
         </div>
-        <span class="d-flex align-center gap-1">
-            <MudIcon Icon="@Icons.Material.Rounded.Bolt" Size="Size.Small" Style="color: #E0872E;" />
-            <span>Avanza automáticamente al responder</span>
-        </span>
+
+        <!-- Keyboard Shortcuts Hint Footer (Desktop / Tablet) -->
+        <div class="d-none d-sm-flex align-center justify-center flex-wrap gap-2 gap-sm-4 text-center mt-2" style="font-size: 0.8rem; color: #78716C;">
+            <div class="d-flex align-center gap-1.5">
+                <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">↑</span>
+                <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">←</span>
+                <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">↓</span>
+                <span class="kbd-pill-arrow" style="width: 24px; height: 24px; font-size: 0.9rem;">→</span>
+                <span class="ml-1 font-weight-bold">Flechas o 1-4</span>
+            </div>
+            <span class="d-flex align-center gap-1">
+                <MudIcon Icon="@Icons.Material.Rounded.Bolt" Size="Size.Small" Style="color: #E0872E;" />
+                <span>Avanza automáticamente al responder</span>
+            </span>
+        </div>
     </div>
 }
 

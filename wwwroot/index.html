@@ -128,31 +128,6 @@
                 this.dotNetRef = null;
             }
         };
-
-        window.learnKeyboardHandler = {
-            dotNetRef: null,
-            handler: null,
-            init: function(dotNetRef) {
-                this.dotNetRef = dotNetRef;
-                this.handler = (e) => {
-                    if (['1', '2', 'Enter', ' ', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-                            return;
-                        }
-                        e.preventDefault();
-                        this.dotNetRef.invokeMethodAsync('HandleKeyDown', e.key);
-                    }
-                };
-                document.addEventListener('keydown', this.handler);
-            },
-            dispose: function() {
-                if (this.handler) {
-                    document.removeEventListener('keydown', this.handler);
-                    this.handler = null;
-                }
-                this.dotNetRef = null;
-            }
-        };
     </script>
 </body>
 

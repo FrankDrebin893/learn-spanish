@@ -9,8 +9,7 @@ Welcome! This repository is designed to be agent-agnostic. Whether you are worki
 **learn-spanish** (Aprende Español) is a modern, standalone web application for mastering Spanish vocabulary. It uses vocabulary frequency rankings and Wiktionary definitions from the `doozan/spanish_data` dataset.
 
 ### Key Capabilities
-- **Learn Mode**: Spaced repetition flashcards ordered by natural frequency, featuring native pronunciation audio and example sentences.
-- **Quiz Mode**: Interactive multiple-choice testing (Spanish-to-English, English-to-Spanish, and mixed) with keyboard shortcuts and review sessions.
+- **Quiz Mode (Primary Engine)**: High-yield interactive multiple-choice testing (Spanish-to-English, English-to-Spanish, and mixed) with directional compass layout, 1-screen mobile fit, keyboard shortcuts, native audio, and immediate feedback.
 - **Statistics**: Granular vocabulary mastery tracking, accuracy metrics, and performance filters.
 - **Offline & GitHub Pages Ready**: Fully client-side Blazor WebAssembly standalone application with browser `localStorage` persistence. No backend server required.
 

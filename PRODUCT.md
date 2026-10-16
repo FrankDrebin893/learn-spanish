@@ -20,21 +20,15 @@ Instead of arbitrary word lists, the curriculum is prioritized by empirical ling
 
 1. **Dashboard (Home)**:
    - Daily motivation, vocabulary mastery progress bar, and summary stats (Learned, Seen, Quizzes taken).
-   - Instant jump actions: "Start Learning" and "Take a Quiz".
-2. **Flashcards (Learn Mode)**:
-   - Ordered by natural frequency ranking (`#1 de`, `#2 que`, etc.).
-   - Dual-side recall: Spanish word & part-of-speech chip -> reveal English gloss, definitions, and usage examples.
-   - Built-in native Spanish pronunciation audio via browser Web Speech API.
-   - Self-assessment feedback: "Still Learning" vs "Got It!", updating learning retention.
-   - Keyboard shortcuts: `Space`/`Enter` to flip, `1` / `2` to rate, Arrow keys to navigate.
-3. **Interactive Quizzes (Quiz Mode)**:
-   - Multiple choice tests: Spanish-to-English, English-to-Spanish, or Mixed.
-   - Configurable question sets (5, 10, 20, 50 questions).
-   - Real-time score feedback, streak counter, and final performance scorecard with accuracy rating.
-   - Keyboard accelerated: `1` - `4` for option selection, `Enter` to advance.
-4. **Performance Analytics (Statistics)**:
+   - Instant launch into active vocabulary quizzes and practice.
+2. **Interactive Quizzes (Core Feature)**:
+   - High-yield multiple choice retrieval tests: Spanish-to-English, English-to-Spanish, or Mixed.
+   - Configurable question sets (5, 10, 20, 50 questions) and frequency tiers.
+   - 1-Screen mobile layout: fits entirely within mobile viewports with zero vertical scroll.
+   - Directional compass and keyboard accelerated navigation (`↑`/`←`/`→`/`↓` or `1`-`4`), instant audio playback, streak counter, and performance celebration scorecard with accuracy rating.
+3. **Performance Analytics (Statistics)**:
    - Granular breakdown of word performance.
-   - Filter words by status: All, Learned, Struggling, or Unseen.
+   - Filter words by status: All, Learned, or Struggling.
    - Option to reset progress or export/import in future updates.
 
 ---
