@@ -19,7 +19,7 @@ Welcome! This repository is designed to be agent-agnostic. Whether you are worki
 
 - **Framework**: .NET 9 Blazor WebAssembly Standalone (`Microsoft.NET.Sdk.BlazorWebAssembly`).
 - **UI Component Library**: MudBlazor 8 (Material Design tailored with custom *Tierra y Sol* theme tokens).
-- **Persistence**: Browser `localStorage` via Blazor `IJSRuntime` (`Services/ProgressService.cs`).
+- **Persistence**: Local-first browser `localStorage` via Blazor `IJSRuntime` (`Services/ProgressService.cs`) with optional zero-cost multi-user cloud synchronization via Supabase (`Services/AuthService.cs`).
 - **Vocabulary Data**: Pre-processed high-frequency Spanish vocabulary stored in `wwwroot/data/words.json` with embedded fallback data in `Services/WordService.cs`.
 - **Hosting**: Static web hosting compatible with **GitHub Pages**, Cloudflare Pages, Netlify, or Vercel.
 

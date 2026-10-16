@@ -36,6 +36,6 @@ Instead of arbitrary word lists, the curriculum is prioritized by empirical ling
 ## 4. Operating Context & Technical Constraints
 
 - **Hosting**: Static file hosting on **GitHub Pages** (Single Page Application via Blazor WebAssembly).
-- **Data Persistence**: 100% in-browser storage using `window.localStorage` (keyed under `spanish_word_learner_progress`).
+- **Data Persistence**: Local-first in-browser storage using `window.localStorage` with optional cross-device multi-user cloud synchronization powered by Supabase (Row-Level Security protected).
 - **Data Source**: Pre-bundled JSON payload containing 10,000 frequency-ranked vocabulary entries (`wwwroot/data/words.json`) with embedded offline fallback.
 - **Accessibility**: High contrast ratios, full keyboard navigation support, screen-reader friendly semantic labels.
