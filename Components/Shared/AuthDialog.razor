@@ -241,7 +241,7 @@
         }
 
         _isSubmitting = true;
-        var result = await AuthService.SendMagicLinkAsync(_magicEmail);
+        var result = await AuthService.SendMagicLinkAsync(_magicEmail, NavigationManager.BaseUri);
         _isSubmitting = false;
 
         if (result.Success)
@@ -274,7 +274,7 @@
 
         if (_isSignUp)
         {
-            result = await AuthService.SignUpWithPasswordAsync(_email, _password);
+            result = await AuthService.SignUpWithPasswordAsync(_email, _password, NavigationManager.BaseUri);
         }
         else
         {

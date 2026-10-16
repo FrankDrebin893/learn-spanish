@@ -96,14 +96,20 @@ public class AuthService
         }
     }
 
-    public async Task<(bool Success, string? ErrorMessage)> SignUpWithPasswordAsync(string email, string password)
+    public async Task<(bool Success, string? ErrorMessage)> SignUpWithPasswordAsync(string email, string password, string? redirectTo = null)
     {
         if (!IsConfigured || _client == null)
             return (false, "El servicio de autenticación no está configurado.");
 
         try
         {
-            var session = await _client.Auth.SignUp(email.Trim(), password);
+            var options = new SignUpOptions();
+            if (!string.IsNullOrWhiteSpace(redirectTo))
+            {
+                options.RedirectTo = redirectTo;
+            }
+
+            var session = await _client.Auth.SignUp(email.Trim(), password, options);
             if (session != null)
             {
                 AuthStateChanged?.Invoke();
@@ -118,14 +124,20 @@ public class AuthService
         }
     }
 
-    public async Task<(bool Success, string? ErrorMessage)> SendMagicLinkAsync(string email)
+    public async Task<(bool Success, string? ErrorMessage)> SendMagicLinkAsync(string email, string? redirectTo = null)
     {
         if (!IsConfigured || _client == null)
             return (false, "El servicio de autenticación no está configurado.");
 
         try
         {
-            await _client.Auth.SendMagicLink(email.Trim());
+            var options = new SignInOptions();
+            if (!string.IsNullOrWhiteSpace(redirectTo))
+            {
+                options.RedirectTo = redirectTo;
+            }
+
+            await _client.Auth.SendMagicLink(email.Trim(), options);
             return (true, null);
         }
         catch (Exception ex)

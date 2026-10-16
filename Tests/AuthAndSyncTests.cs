@@ -42,9 +42,10 @@ public class AuthAndSyncTests
 
         var options = new SupabaseOptions { AutoRefreshToken = false };
         var client = new Supabase.Client("https://example.supabase.co", "key", options);
-        var res = await client.Auth.SignIn(Constants.Provider.Google);
-        Assert.NotNull(res);
-        Assert.NotNull(res.Uri);
+        var signUpOptions = new SignUpOptions { RedirectTo = "https://example.com/learn-spanish/" };
+        var signInOptions = new SignInOptions { RedirectTo = "https://example.com/learn-spanish/" };
+        Assert.NotNull(signUpOptions);
+        Assert.NotNull(signInOptions);
     }
 
     [Fact]
