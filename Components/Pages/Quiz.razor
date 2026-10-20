@@ -44,6 +44,14 @@
                 <MudSelectItem Value="1000">Top 1,000 palabras (avanzado)</MudSelectItem>
                 <MudSelectItem Value="10000">Todo el repertorio (10,000)</MudSelectItem>
             </MudSelect>
+
+            <div class="d-flex align-center justify-space-between px-3 py-2 rounded-lg" style="background: #FAF8F5; border: 1px solid #EBE6DE;">
+                <div>
+                    <MudText Typo="Typo.body2" Style="font-weight: 700; color: #1C1917;">Omitir palabras ya dominadas</MudText>
+                    <MudText Typo="Typo.caption" Style="color: #78716C; display: block;">Avanza por las @(WordService.TotalWordCount.ToString("N0")) palabras sin repetir las aprendidas</MudText>
+                </div>
+                <MudSwitch T="bool" @bind-Value="_excludeLearnedWords" Color="Color.Primary" Class="ma-0" />
+            </div>
         </div>
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large"
@@ -344,6 +352,7 @@ else if (_currentQuestion != null)
     private int _questionCount = 10;
     private string _quizType = "SpanishToEnglish";
     private int _frequencyScope = 500;
+    private bool _excludeLearnedWords = true;
 
     private bool _quizStarted = false;
     private bool _quizComplete = false;
@@ -401,15 +410,10 @@ else if (_currentQuestion != null)
         }
     }
 
-    private void StartQuiz()
+    private async Task StartQuiz()
     {
-        var pool = WordService.GetWordsByFrequency(_frequencyScope);
-        if (pool.Count < 4)
-        {
-            pool = WordService.GetAllWords();
-        }
-
-        var selectedWords = pool.OrderBy(_ => Random.Shared.Next()).Take(_questionCount).ToList();
+        var progress = await ProgressService.GetProgressAsync();
+        var selectedWords = WordService.GetQuizWords(_questionCount, _frequencyScope, progress, _excludeLearnedWords);
         _questions = new List<QuizQuestion>();
 
         foreach (var word in selectedWords)
@@ -421,7 +425,7 @@ else if (_currentQuestion != null)
                 _ => Random.Shared.Next(2) == 0
             };
 
-            var wrongOptions = WordService.GetRandomWords(3, new List<int> { word.Id });
+            var wrongOptions = WordService.GetRandomWords(3, new List<int> { word.Id }, word.PartOfSpeech);
             var options = new List<SpanishWord> { word };
             options.AddRange(wrongOptions);
             options = options.OrderBy(_ => Random.Shared.Next()).ToList();
@@ -607,10 +611,10 @@ else if (_currentQuestion != null)
         StateHasChanged();
     }
 
-    private void RestartQuiz()
+    private async Task RestartQuiz()
     {
         _autoAdvanceCts?.Cancel();
-        StartQuiz();
+        await StartQuiz();
     }
 
     private void ExitQuiz()

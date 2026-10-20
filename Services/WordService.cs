@@ -87,13 +87,166 @@ public class WordService
     public List<SpanishWord> GetWordsByFrequency(int count, int skip = 0)
         => _words.OrderBy(w => w.FrequencyRank).Skip(skip).Take(count).ToList();
 
-    public List<SpanishWord> GetRandomWords(int count, List<int>? excludeIds = null)
+    public List<SpanishWord> GetRandomWords(int count, List<int>? excludeIds = null, string? partOfSpeech = null)
     {
-        var available = excludeIds != null
-            ? _words.Where(w => !excludeIds.Contains(w.Id)).ToList()
-            : _words;
-        return available.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
+        var excludedSet = excludeIds != null ? new HashSet<int>(excludeIds) : new HashSet<int>();
+        var excludedSpanish = excludedSet.Count > 0
+            ? _words.Where(w => excludedSet.Contains(w.Id)).Select(w => w.Spanish).ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var excludedEnglish = excludedSet.Count > 0
+            ? _words.Where(w => excludedSet.Contains(w.Id)).Select(w => w.English).ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        var available = _words.Where(w => !excludedSet.Contains(w.Id)).ToList();
+
+        if (string.IsNullOrWhiteSpace(partOfSpeech))
+        {
+            return available.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
+        }
+
+        // 1. Primary pool: exact PartOfSpeech match with distinct translations
+        var sameCategoryDistinct = available
+            .Where(w => string.Equals(w.PartOfSpeech, partOfSpeech, StringComparison.OrdinalIgnoreCase)
+                        && !excludedSpanish.Contains(w.Spanish)
+                        && !excludedEnglish.Contains(w.English))
+            .OrderBy(_ => Random.Shared.Next())
+            .ToList();
+
+        var result = new List<SpanishWord>();
+        var usedIds = new HashSet<int>(excludedSet);
+        var usedSpanish = new HashSet<string>(excludedSpanish, StringComparer.OrdinalIgnoreCase);
+        var usedEnglish = new HashSet<string>(excludedEnglish, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var candidate in sameCategoryDistinct)
+        {
+            if (result.Count >= count) break;
+            if (usedIds.Add(candidate.Id) && usedSpanish.Add(candidate.Spanish) && usedEnglish.Add(candidate.English))
+            {
+                result.Add(candidate);
+            }
+        }
+
+        if (result.Count >= count)
+        {
+            return result;
+        }
+
+        // 2. Secondary pool: exact PartOfSpeech match even if translation overlaps
+        var sameCategoryAll = available
+            .Where(w => string.Equals(w.PartOfSpeech, partOfSpeech, StringComparison.OrdinalIgnoreCase)
+                        && !usedIds.Contains(w.Id))
+            .OrderBy(_ => Random.Shared.Next());
+
+        foreach (var candidate in sameCategoryAll)
+        {
+            if (result.Count >= count) break;
+            if (usedIds.Add(candidate.Id))
+            {
+                result.Add(candidate);
+            }
+        }
+
+        if (result.Count >= count)
+        {
+            return result;
+        }
+
+        // 3. Fallback for ultra-rare categories (< 4 total words in dataset): related categories, then any available word
+        var relatedCategories = GetRelatedPartsOfSpeech(partOfSpeech);
+        if (relatedCategories.Count > 0)
+        {
+            var relatedCandidates = available
+                .Where(w => relatedCategories.Contains(w.PartOfSpeech, StringComparer.OrdinalIgnoreCase)
+                            && !usedIds.Contains(w.Id))
+                .OrderBy(_ => Random.Shared.Next());
+
+            foreach (var candidate in relatedCandidates)
+            {
+                if (result.Count >= count) break;
+                if (usedIds.Add(candidate.Id))
+                {
+                    result.Add(candidate);
+                }
+            }
+        }
+
+        if (result.Count < count)
+        {
+            var fallbackCandidates = available
+                .Where(w => !usedIds.Contains(w.Id))
+                .OrderBy(_ => Random.Shared.Next());
+
+            foreach (var candidate in fallbackCandidates)
+            {
+                if (result.Count >= count) break;
+                if (usedIds.Add(candidate.Id))
+                {
+                    result.Add(candidate);
+                }
+            }
+        }
+
+        return result;
     }
+
+    public List<SpanishWord> GetQuizWords(int count, int frequencyScope, UserProgress? progress = null, bool excludeLearned = true)
+    {
+        var pool = GetWordsByFrequency(frequencyScope);
+        if (pool.Count < 4)
+        {
+            pool = GetAllWords();
+        }
+
+        if (excludeLearned && progress != null)
+        {
+            var learnedIds = progress.WordStats.Values
+                .Where(w => w.IsLearned)
+                .Select(w => w.WordId)
+                .ToHashSet();
+
+            if (learnedIds.Count > 0)
+            {
+                var unlearnedInScope = pool.Where(w => !learnedIds.Contains(w.Id)).ToList();
+                if (unlearnedInScope.Count >= count)
+                {
+                    return unlearnedInScope.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
+                }
+
+                // Expand to remaining unlearned words ordered by frequency so the user can progress through all 10,000 words
+                var inScopeIds = unlearnedInScope.Select(w => w.Id).ToHashSet();
+                var needed = count - unlearnedInScope.Count;
+                var nextUnlearnedPool = _words
+                    .Where(w => !learnedIds.Contains(w.Id) && !inScopeIds.Contains(w.Id))
+                    .OrderBy(w => w.FrequencyRank)
+                    .Take(Math.Max(needed, frequencyScope))
+                    .OrderBy(_ => Random.Shared.Next())
+                    .Take(needed)
+                    .ToList();
+
+                var combinedUnlearned = unlearnedInScope
+                    .Concat(nextUnlearnedPool)
+                    .OrderBy(_ => Random.Shared.Next())
+                    .ToList();
+
+                if (combinedUnlearned.Count > 0)
+                {
+                    return combinedUnlearned;
+                }
+            }
+        }
+
+        return pool.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
+    }
+
+    private static List<string> GetRelatedPartsOfSpeech(string partOfSpeech) => partOfSpeech.ToLowerInvariant() switch
+    {
+        "article" or "art" => new List<string> { "determiner", "pronoun", "pron" },
+        "determiner" => new List<string> { "article", "art", "pronoun", "pron", "adjective", "adj" },
+        "contraction" => new List<string> { "preposition", "prep", "article", "art", "determiner" },
+        "preposition" or "prep" => new List<string> { "contraction", "conjunction", "conj", "adverb", "adv" },
+        "prefix" or "particle" or "phrase" => new List<string> { "interj", "adverb", "adv", "preposition", "prep" },
+        _ => new List<string>()
+    };
 
     public int TotalWordCount => _words.Count;
     public bool IsLoaded => _initialized;
@@ -302,7 +455,10 @@ public class WordService
             new() { Id = 197, Spanish = "montano", English = "mountain", PartOfSpeech = "noun", FrequencyRank = 197, ExampleSentence = "Una montana alta.", ExampleTranslation = "A tall mountain." },
             new() { Id = 198, Spanish = "arbol", English = "tree", PartOfSpeech = "noun", FrequencyRank = 198, ExampleSentence = "Debajo del arbol.", ExampleTranslation = "Under the tree." },
             new() { Id = 199, Spanish = "flor", English = "flower", PartOfSpeech = "noun", FrequencyRank = 199, ExampleSentence = "Una flor bonita.", ExampleTranslation = "A pretty flower." },
-            new() { Id = 200, Spanish = "corazon", English = "heart", PartOfSpeech = "noun", FrequencyRank = 200, ExampleSentence = "Con todo mi corazon.", ExampleTranslation = "With all my heart." }
+            new() { Id = 200, Spanish = "corazon", English = "heart", PartOfSpeech = "noun", FrequencyRank = 200, ExampleSentence = "Con todo mi corazon.", ExampleTranslation = "With all my heart." },
+            new() { Id = 201, Spanish = "uno", English = "one", PartOfSpeech = "num", FrequencyRank = 201, ExampleSentence = "Solo uno.", ExampleTranslation = "Only one." },
+            new() { Id = 202, Spanish = "cuatro", English = "four", PartOfSpeech = "num", FrequencyRank = 202, ExampleSentence = "Cuatro estaciones.", ExampleTranslation = "Four seasons." },
+            new() { Id = 203, Spanish = "cinco", English = "five", PartOfSpeech = "num", FrequencyRank = 203, ExampleSentence = "Cinco minutos.", ExampleTranslation = "Five minutes." }
         };
     }
 }
